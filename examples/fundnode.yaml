@@ -1,0 +1,4467 @@
+openapi: 3.0.0
+info:
+  title: Fundnode API
+  description: Fundnode API Endpoint
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: Fundnode Team
+    url: https://www.marketnode.com
+    email: fundops@marketnode.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.30.0
+servers:
+- url: /
+security:
+- bearerAuth: []
+tags:
+- name: Order
+  description: Order endpoints
+  x-displayName: Order
+- name: External
+  description: All endpoints accessible for external calls (APIM)
+  x-displayName: External
+- name: Internal
+  description: All endpoints accessible for internals calls
+  x-displayName: Internal
+paths:
+  /submitOrderLine:
+    post:
+      tags:
+      - Order
+      - External
+      summary: Submitting Order
+      description: |
+        🔒 Allowed with roles : [0, 3636(I), 3647(I), 47(I)] 🔒
+      operationId: submitOrderLineHandler
+      requestBody:
+        content:
+          application/json:
+            schema:
+              minItems: 1
+              type: array
+              items:
+                $ref: '#/components/schemas/submitOrderLine_body'
+        required: true
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                minItems: 1
+                type: array
+                items:
+                  $ref: '#/components/schemas/inline_response_200'
+      security:
+      - bearerAuth: []
+  /submitAgentBankApproval:
+    post:
+      tags:
+      - Order
+      - External
+      summary: Submitting Agent Bank Approval
+      operationId: submitAgentBankApproval
+      requestBody:
+        content:
+          application/json:
+            schema:
+              minItems: 1
+              type: array
+              items:
+                $ref: '#/components/schemas/submitAgentBankApproval_body'
+        required: true
+      responses:
+        "501":
+          description: Not implemented
+      security: []
+  /status:
+    get:
+      tags:
+      - Order
+      - External
+      summary: Get status of orders
+      description: |
+        🔒 Allowed with roles : [0, 3636(I), 3647(I), 47(I)] 🔒 \
+        ⚠️ At least one query parameter need to be provided \
+        ℹ️ Limit equals 0 represent no limit
+      operationId: getStatus
+      parameters:
+      - name: orderRef
+        in: query
+        description: The Fundnode reference of the order
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+        example: FDLT0ld0dv3cjgmx
+      - name: batchNumber
+        in: query
+        description: Batch Number
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+        example: FUND0014
+      - name: senderCode
+        in: query
+        description: Sender Code
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+        example: F50014
+      - name: sendDate
+        in: query
+        description: Send Date
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+        example: "20230106"
+      - name: identificationNumber
+        in: query
+        description: Identification Number (user)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+        example: S1629826C
+      - name: distributorReferenceId
+        in: query
+        description: Identification of transaction
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+        example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb-0026
+      - name: correlationId
+        in: query
+        description: ID of the call
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+        example: 1e6860c5-395f-4941-851e-6efa29fa3308
+      - name: fnReferenceId
+        in: query
+        description: Fund Node Reference Identification
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+        example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb-0026
+      - name: isCancellation
+        in: query
+        description: Define if cancellation request is linked or not
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: boolean
+        example: false
+      - name: page
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          default: 100
+      - name: sortKey
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          default: createdAt
+          enum:
+          - createdAt
+          - orderRef
+          - batchNumber
+          - senderCode
+          - sendDate
+          - identificationNumber
+          - correlationId
+      - name: sortValue
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          default: desc
+          enum:
+          - asc
+          - desc
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_1'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+      security:
+      - bearerAuth: []
+  /bulkOrderStatus:
+    get:
+      tags:
+      - Order
+      - External
+      summary: Get status of bulked orders
+      description: |
+        🔒 Allowed with roles : [0, 3636(I), 3647(I), 47(I)] 🔒 \
+        ℹ️ Limit equals 0 represent no limit
+      operationId: getBulkedOrdersStatus
+      parameters:
+      - name: masterRef
+        in: query
+        description: The Fundnode reference of the bulked order
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+        example: FDLT0ld0dv3cjgmx
+      - name: page
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          default: 100
+      - name: sortKey
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          default: createdAt
+          enum:
+          - createdAt
+          - masterRef
+          - state
+      - name: sortValue
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          default: desc
+          enum:
+          - asc
+          - desc
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_2'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+      security:
+      - bearerAuth: []
+  /submitOrderConfirmation:
+    post:
+      tags:
+      - Order
+      - External
+      summary: Transfer Agent Order Confirmation
+      description: |
+        🔒 Allowed with roles : [0, 3636(I), 3647(I), 47(I)] 🔒
+      operationId: submitOrderConfirmation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              maxItems: 1
+              minItems: 1
+              type: array
+              items:
+                $ref: '#/components/schemas/submitOrderConfirmation_body'
+        required: true
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                maxItems: 1
+                minItems: 1
+                type: array
+                items:
+                  $ref: '#/components/schemas/inline_response_200_3'
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+      security:
+      - bearerAuth: []
+  /submitOrderState:
+    post:
+      tags:
+      - Order
+      - External
+      summary: Transfer Agent Order Status
+      description: |
+        🔒 Allowed with roles : [0, 3636(I), 3647(I), 47(I)] 🔒
+      operationId: submitOrderState
+      requestBody:
+        content:
+          application/json:
+            schema:
+              maxItems: 1
+              minItems: 1
+              type: array
+              items:
+                $ref: '#/components/schemas/submitOrderState_body'
+        required: true
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                maxItems: 1
+                minItems: 1
+                type: array
+                items:
+                  $ref: '#/components/schemas/inline_response_200_4'
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+      security:
+      - bearerAuth: []
+  /submitOrderCancellation:
+    post:
+      tags:
+      - Order
+      - External
+      summary: Order Cancellation
+      description: |
+        🔒 Allowed with roles : [0, 3636(I), 3647(I), 47(I)] 🔒
+      operationId: submitOrderCancellation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/submitOrderCancellation_body'
+        required: true
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_5'
+              examples:
+                "2":
+                  value:
+                    fnReferenceId: c600c33e-1d0a-4d43-b3c7-4aaf8895e074
+                    orderRef:
+                    - FDLT0lgw9blkg2li
+                    cancellation:
+                      cancellationRequestDateTime: 2023-04-25T14:27:08.133Z
+                      fdltCancellationStatus: REJECTED
+                      fdltRejectReason: Cancellation received after COT
+                "4":
+                  value:
+                    fnReferenceId: c600c33e-1d0a-4d43-b3c7-4aaf8895e074
+                    orderRef:
+                    - FDLT0lgw9blkg2li
+                    cancellation:
+                      cancellationRequestDateTime: 2023-04-25T14:27:08.133Z
+                      fdltCancellationStatus: REJECTED
+                      fdltRejectReason: Order already bulked
+                "5":
+                  value:
+                    fnReferenceId: c600c33e-1d0a-4d43-b3c7-4aaf8895e074
+                    orderRef:
+                    - FDLT0lgw9blkg2li
+                    cancellation:
+                      cancellationRequestDateTime: 2023-04-25T14:27:08.133Z
+                      fdltCancellationStatus: REJECTED
+                      fdltRejectReason: "TA reason: CUTO - Instruction has been received\
+                        \ after the cut-off time"
+                "6":
+                  value:
+                    fnReferenceId: c600c33e-1d0a-4d43-b3c7-4aaf8895e074
+                    orderRef:
+                    - FDLT0lgw9blkg2li
+                    cancellation:
+                      cancellationRequestDateTime: 2023-04-25T14:27:08.133Z
+                      fdltCancellationStatus: PENDING
+                "1a":
+                  value:
+                    fnReferenceId: c600c33e-1d0a-4d43-b3c7-4aaf8895e074
+                    orderRef:
+                    - FDLT0lgw9blkg2li
+                    cancellation:
+                      cancellationRequestDateTime: 2023-04-25T14:27:08.133Z
+                      fdltCancellationStatus: ACCEPTED
+                "1b":
+                  value:
+                    fnReferenceId: c600c33e-1d0a-4d43-b3c7-4aaf8895e074
+                    orderRef:
+                    - FDLT0lgw9blkg2li
+                    - FDLT0lzs2zerf3vv
+                    cancellation:
+                      cancellationRequestDateTime: 2023-04-25T14:27:08.133Z
+                      fdltCancellationStatus: ACCEPTED
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+        "404":
+          description: Not NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+              examples:
+                default:
+                  value:
+                    code: "404"
+                    message: fnReferenceID does not exist
+        "406":
+          description: Not Acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+              examples:
+                default:
+                  value:
+                    code: "406"
+                    message: cancellation request already submitted
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+      security:
+      - bearerAuth: []
+components:
+  schemas:
+    OrderCancellationRequest:
+      required:
+      - fnReferenceId
+      type: object
+      properties:
+        fnReferenceId:
+          type: string
+          description: Fundnode Reference Identification
+          example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb
+    OrderCancellationResponse:
+      required:
+      - cancellation
+      - fnReferenceId
+      - orderRef
+      type: object
+      properties:
+        fnReferenceId:
+          type: string
+          description: Fundnode Reference Identification
+          example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb
+        orderRef:
+          maxItems: 2
+          minItems: 1
+          type: array
+          items:
+            type: string
+            description: The unique reference of your Order in Fundnode
+            nullable: false
+            example: FDLT0lcyv20loezb
+        cancellation:
+          $ref: '#/components/schemas/OrderCancellationResponse_cancellation'
+    Cancellation:
+      required:
+      - cancellationRequestDateTime
+      - fdltCancellationStatus
+      type: object
+      properties:
+        cancellationRequestDateTime:
+          type: string
+          description: RFC 3339 format
+          format: date-time
+          example: 2023-04-25T14:27:08.133Z
+        fdltCancellationStatus:
+          type: string
+          description: Cancellation status on Fundnode side
+          example: REJECTED
+          enum:
+          - ACCEPTED
+          - REJECTED
+          - PENDING
+        fdltRejectReason:
+          type: string
+          description: Reason of the rejection on Fundnode side
+          example: Cancellation received after COT
+      description: Information about cancellation
+    CancellationStatus:
+      type: string
+      description: Cancellation status on Fundnode side
+      example: REJECTED
+      enum:
+      - ACCEPTED
+      - REJECTED
+      - PENDING
+    RejectReason:
+      type: string
+      description: Reason of the rejection on Fundnode side
+      example: Cancellation received after COT
+    OrderRef:
+      type: string
+      description: The unique reference of your Order in Fundnode
+      example: FDLT0lcyv20loezb
+    AgentBankApproval:
+      required:
+      - agentBankProcessCode
+      - distributorCode
+      - distributorReferenceId
+      - fnReferenceId
+      - processingDate
+      type: object
+      properties:
+        distributorCode:
+          type: string
+          example: F50006
+        distributorReferenceId:
+          type: string
+          example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb-0026
+        fnReferenceId:
+          type: string
+          example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb
+        processingDate:
+          pattern: "^\\d{4}\\d{2}\\d{2}$"
+          type: string
+          example: "20230106"
+        agentBankReferenceId:
+          type: string
+        agentBankProcessCode:
+          type: string
+          description: "0000 : Successful <br /> 0010 : External party code not found\
+            \ <br /> 0011 : Please refer to member (bankrupt, medical grounds, a/c\
+            \ frozen) <br /> 0012 : Mismatch account number against CPFOA or Other\
+            \ Info <br /> 0014 : Account closed <br /> 0015 : Insufficient funds for\
+            \ settlement <br /> 0016 : Mismatched identification number <br /> 9999\
+            \ : Other reasons <br />"
+          enum:
+          - "0000"
+          - "0010"
+          - "0011"
+          - "0012"
+          - "0014"
+          - "0015"
+          - "0016"
+          - "9999"
+    GetBulkStatusResponseItem:
+      required:
+      - cashSttlDt
+      - fees
+      - grossAmt
+      - masterRef
+      - nav
+      - netAmt
+      - unitsNb
+      type: object
+      properties:
+        masterRef:
+          type: string
+          description: The unique reference of your Bulked Order in Fundnode
+          nullable: false
+          example: FDLT0lcyv20loezb
+        unitsNb:
+          type: string
+          description: Number of shares (available since CONF)
+          nullable: true
+        netAmt:
+          type: string
+          description: Net amount (available since CONF)
+          nullable: true
+        grossAmt:
+          type: string
+          description: Gross amount
+          nullable: true
+        nav:
+          type: string
+          description: Nav
+          nullable: true
+        cashSttlDt:
+          pattern: "^\\d{4}\\d{2}\\d{2}$"
+          type: string
+          description: Cash settlement date (available since CONF)
+          nullable: true
+          example: "20230106"
+        fees:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/submitOrderConfirmation_fees'
+    GetStatusResponseItem:
+      required:
+      - batchNumber
+      - correlationId
+      - distributorReferenceId
+      - fnReferenceId
+      - orderRef
+      - sendDate
+      - senderCode
+      - status
+      - transactiontype
+      type: object
+      properties:
+        status:
+          type: string
+          description: "State of the order  <br /> PREP : Proccess ongoing <br />\
+            \  CREA : Order created <br /> INI : Order initiated <br /> HELD : Order\
+            \ held (optional) <br /> BULKED : Order bulked (optional) <br /> ACK :\
+            \ Order sent <br /> RECE : Order received (optional) <br /> PACK : Order\
+            \ accepted <br /> CONF : Order confirmed <br /> PLEDGED : Order pledged\
+            \ (settlement cycle conditional) <br /> RJCTD : Order rejected (conditional)\
+            \ <br /> CANC : Order canceled (conditional) <br /> CLOSED : Order closed\
+            \ <br /> ERROR : Order in error <br />"
+        orderRef:
+          type: string
+          description: The unique reference of your Order in Fundnode
+          nullable: false
+          example: FDLT0lcyv20loezb
+        batchNumber:
+          type: string
+          example: 9FUND0014
+        senderCode:
+          type: string
+          example: F50014
+        sendDate:
+          type: string
+          example: "20230106"
+        distributorReferenceId:
+          type: string
+          example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb-0026
+        transactionType:
+          type: string
+          example: P
+        correlationId:
+          type: string
+          description: ID of the call
+          example: 1e6860c5-395f-4941-851e-6efa29fa3308
+        errorStatus:
+          type: string
+          description: Code of the error
+          nullable: true
+          enum:
+          - MKNB-XXXXX-0000
+          - MKNB-XX-SWITCH-0001
+          - MKNB-XX-STXXX-0000
+          - MKNB-XX-STXXX-0001
+          - MKNB-XX-STXXX-0002
+          - MKNB-XX-STXXX-0003
+          - MKNB-XX-STXXX-0004
+          - MKNB-XX-STXXX-0005
+          - MKNB-XX-STXXX-0006
+          - MKNB-XX-STXXX-0007
+          - MKNB-XX-STXXX-0008
+          - MKNB-XX-STXXX-0009
+          - MKNB-XX-STXXX-0010
+          - MKNB-FM-ST000-0001
+          - MKNB-FM-ST000-0002
+          - MKNB-FM-ST000-0004
+          - MKNB-FM-ST000-0005
+          - MKNB-UT-ST000-0001
+          - MKNB-UT-ST000-0002
+          - MKNB-UT-ST000-0004
+          - MKNB-UT-ST000-0005
+          - MKNB-FM-ST001-0001
+          - MKNB-UT-ST001-0001
+          - MKNB-FM-ST002-0003
+          - MKNB-UT-ST002-0003
+          - MKNB-FM-ST003-0001
+          - MKNB-FM-ST003-0002
+          - MKNB-UT-ST003-0001
+          - MKNB-UT-ST003-0002
+          - MKNB-FM-ST004-0001
+          - MKNB-UT-ST004-0001
+          - MKNB-CMN-ST000-0001
+          - MKNB-CMN-ST000-0002
+          - MKNB-CMN-ST000-0003
+          - MKNB-CMN-ST000-0004
+          - MKNB-CMN-ST000-0005
+          - MKNB-CMN-ST000-0006
+          - MKNB-CMN-ST000-0009
+          - MKNB-CMN-ST000-0010
+          - MKNB-CMN-ST000-0011
+          - MKNB-CANC-0000
+          - MKNB-CANC-0001
+          - MKNB-CANC-0002
+        errorMessage:
+          type: string
+          description: Message of the error
+          example: WORKFLOW UT NOT MANAGE
+        traceId:
+          type: string
+          description: Trace in FDLT platform
+          example: 5ddfc90a7512e9f5
+        identificationNumber:
+          type: string
+          example: 1e6860c5-395f-4941-851e-6efa29fa3308
+        fnReferenceId:
+          type: string
+          example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb
+        whitelistedTransaction:
+          type: string
+          description: if whitelisted or not (available since CONF)
+          nullable: true
+          enum:
+          - "Y"
+          - "N"
+        blacklistedTransaction:
+          type: string
+          description: if blacklisted or not (available since CONF)
+          nullable: true
+          enum:
+          - "Y"
+          - "N"
+        navDate:
+          pattern: "^\\d{4}\\d{2}\\d{2}$"
+          type: string
+          description: NAV date (available since CONF)
+          example: "20230106"
+        price:
+          type: string
+          description: NAV pricing used for unit allotment. Last 6 digits to be decimals
+            (available since CONF)
+          example: "123456"
+        taReferenceId:
+          type: string
+          description: TA's transaction reference ID (available since CONF)
+        unitsNb:
+          type: string
+          description: Number of shares (available since CONF)
+          example: "10"
+        netAmt:
+          type: string
+          description: Net amount (available since CONF)
+          example: "990.63"
+        amt:
+          type: string
+          description: Gross amount
+          example: "1000"
+        detailedMessage:
+          type: string
+          description: Detailed free text message on reasons for rejection
+          example: reason of the rejection
+        masterRef:
+          type: string
+          description: Bulk OrderRef
+          example: FDLT0lh7rn3861gd
+        cancellation:
+          $ref: '#/components/schemas/OrderCancellationResponse_cancellation'
+        cashSttlDt:
+          pattern: "^\\d{4}\\d{2}\\d{2}$"
+          type: string
+          description: Cash settlement date (available since CONF)
+          example: "20230106"
+    OrderState:
+      type: string
+      description: "State of the order  <br /> PREP : Proccess ongoing <br />  CREA\
+        \ : Order created <br /> INI : Order initiated <br /> HELD : Order held (optional)\
+        \ <br /> BULKED : Order bulked (optional) <br /> ACK : Order sent <br /> RECE\
+        \ : Order received (optional) <br /> PACK : Order accepted <br /> CONF : Order\
+        \ confirmed <br /> PLEDGED : Order pledged (settlement cycle conditional)\
+        \ <br /> RJCTD : Order rejected (conditional) <br /> CANC : Order canceled\
+        \ (conditional) <br /> CLOSED : Order closed <br /> ERROR : Order in error\
+        \ <br />"
+    RawRecord:
+      required:
+      - azRegion
+      - correlationId
+      - createdAt
+      - method
+      - path
+      - shardedKey
+      - type
+      type: object
+      properties:
+        correlationId:
+          type: string
+          nullable: false
+        code:
+          type: integer
+          nullable: true
+        body:
+          type: string
+          nullable: true
+        type:
+          type: string
+          enum:
+          - RESPONSE
+          - REQUEST
+        method:
+          type: string
+          nullable: false
+        path:
+          type: string
+          nullable: false
+        azRegion:
+          type: string
+          nullable: false
+        createdAt:
+          type: string
+          description: RFC 3339 format
+          format: date-time
+        shardedKey:
+          type: string
+          nullable: false
+    RawType:
+      type: string
+      enum:
+      - RESPONSE
+      - REQUEST
+    OrderLineRecord:
+      required:
+      - correlationId
+      - createdAt
+      - orderLine
+      - updatedAt
+      type: object
+      properties:
+        orderLine:
+          $ref: '#/components/schemas/submitOrderLine_body'
+        createdAt:
+          type: string
+          description: RFC 3339 format
+          format: date-time
+        updatedAt:
+          type: string
+          description: RFC 3339 format
+          format: date-time
+        errorStatus:
+          type: string
+          nullable: true
+        correlationId:
+          type: string
+          nullable: false
+    OrderLine:
+      required:
+      - accountType
+      - batchNumber
+      - distributorCode
+      - distributorFee
+      - distributorReferenceId
+      - dividendInstruction
+      - fnReferenceId
+      - fundCurrency
+      - investmentType
+      - isinCode
+      - paymentCurrency
+      - sendDate
+      - sendTime
+      - senderCode
+      - switchTransaction
+      - taAccountNumber
+      - transactionType
+      type: object
+      properties:
+        batchNumber:
+          type: string
+          example: FUND001
+        senderCode:
+          type: string
+          example: F50014
+        sendDate:
+          type: string
+          example: "20230106"
+        sendTime:
+          type: string
+          example: "152054"
+        fnReferenceId:
+          type: string
+          example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb
+        cpfAccountNumber:
+          type: string
+          example: "123432435"
+        idType:
+          type: string
+          enum:
+          - NRIC
+          - FIN
+          - Passport
+        plAmount:
+          type: string
+        costAmount:
+          type: string
+        investmentType:
+          type: string
+          enum:
+          - UT
+          - FM
+          - FC
+        distributorCode:
+          type: string
+          example: F50006
+        taAccountNumber:
+          type: string
+          example: DACODEFRTA115
+        distributorReferenceId:
+          type: string
+          example: f5127a1c-6304-4994-aeac-f6d4d008b389
+        transactionType:
+          type: string
+          enum:
+          - P
+          - S
+        isinCode:
+          type: string
+          example: SG9999003412
+        units:
+          type: string
+        orderAmount:
+          type: string
+        fundCurrency:
+          type: string
+          example: SGD
+        rsp:
+          type: string
+          enum:
+          - "Y"
+          - "N"
+        accountType:
+          type: string
+          enum:
+          - CASH-INDIVIDUAL
+          - CASH-OMNIBUS
+          - CPFOA
+          - CPFSA
+          - SRS
+        cpfissrsAccountNumber:
+          type: string
+          example: "999999999"
+        taxIdNumber:
+          type: string
+          example: "12345678"
+        endInvestorName:
+          type: string
+          example: Baey Kang Min
+        nationality:
+          type: string
+          example: SG
+        dateOfBirth:
+          pattern: "^\\d{4}\\d{2}\\d{2}$"
+          type: string
+          example: "19800104"
+        addressLine1:
+          type: string
+          example: 520 SIMS AVENUE#02-09
+        addressLine2:
+          type: string
+          example: 520 SIMS AVENUE#02-09
+        addressLine3:
+          type: string
+          example: 520 SIMS AVENUE#02-09
+        postalCode:
+          type: string
+        countryCode:
+          type: string
+        contactNumber:
+          type: string
+          example: "67384380"
+        fatcaStatus:
+          type: string
+          enum:
+          - "N"
+          - O
+          - "Y"
+          - P
+          - X
+          - R
+        countryTaxResidency:
+          type: string
+          example: SG
+        dividendInstruction:
+          type: string
+          enum:
+          - C
+          - R
+        agentBankChargeType:
+          type: string
+          enum:
+          - XTRL
+          - BANK
+        distributorChargeType:
+          type: string
+          enum:
+          - BRKF
+          - CHAR
+          - FEND
+          - COMM
+          - ADDF
+          - DLEV
+        paymentCurrency:
+          type: string
+        switchTransaction:
+          type: string
+          enum:
+          - "Y"
+          - "N"
+        agentBank:
+          type: string
+        identificationNumber:
+          type: string
+          example: S12345678F
+        distributorFee:
+          type: string
+          description: "if 200, represent 2% (2 digits to be decimal)"
+          example: "200"
+        distributorClientAccountNumber:
+          type: string
+          description: Populate distrbutor's internal client account number
+    OrderConfirmationLine:
+      required:
+      - fnReferenceId
+      - navDate
+      - price
+      type: object
+      properties:
+        fnReferenceId:
+          type: string
+          description: Fundnode Reference Identification
+          example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb
+        orderAmount:
+          type: string
+        navDate:
+          pattern: "^\\d{4}\\d{2}\\d{2}$"
+          type: string
+          description: NAV date (available since CONF)
+          example: "20230106"
+        price:
+          type: string
+          description: NAV pricing used for unit allotment. Last 6 digits to be decimals
+            (available since CONF)
+          example: "123456"
+        taReferenceId:
+          type: string
+          description: TA's transaction reference ID (available since CONF)
+        taProcessCode:
+          type: string
+        unitsNb:
+          type: number
+          description: number of units confirmed
+          format: double
+        grossAmt:
+          type: number
+          description: confirmed gross amount
+          format: double
+        netAmt:
+          type: number
+          description: confirmed net amount
+          format: double
+        fees:
+          type: array
+          description: list of confirmed fees
+          items:
+            $ref: '#/components/schemas/submitOrderConfirmation_fees'
+        cashSttlDt:
+          pattern: "^\\d{4}\\d{2}\\d{2}$"
+          type: string
+          example: "20230106"
+    OrderStateLine:
+      required:
+      - fnReferenceId
+      - taProcessingStatus
+      type: object
+      properties:
+        fnReferenceId:
+          type: string
+          description: Fundnode Reference Identification
+          example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb
+        taProcessingStatus:
+          type: string
+          description: "Processing status (00 - Accepted, 01 - Accepted with warning,\
+            \ 99 - Rejected)"
+          example: "00"
+          enum:
+          - "00"
+          - "01"
+          - "99"
+        detailedMessage:
+          type: string
+          description: Detailed free text message on reasons for rejection
+          example: reason of the rejection
+    WhitelistedTransaction:
+      type: string
+      enum:
+      - "Y"
+      - "N"
+    BlacklistedTransaction:
+      type: string
+      enum:
+      - "Y"
+      - "N"
+    SwitchTransaction:
+      type: string
+      enum:
+      - "Y"
+      - "N"
+    RSP:
+      type: string
+      enum:
+      - "Y"
+      - "N"
+    AccountType:
+      type: string
+      enum:
+      - CASH-INDIVIDUAL
+      - CASH-OMNIBUS
+      - CPFOA
+      - CPFSA
+      - SRS
+    InvestmentType:
+      type: string
+      enum:
+      - UT
+      - FM
+      - FC
+    IDType:
+      type: string
+      enum:
+      - NRIC
+      - FIN
+      - Passport
+    FATCAStatus:
+      type: string
+      enum:
+      - "N"
+      - O
+      - "Y"
+      - P
+      - X
+      - R
+    TransactionType:
+      type: string
+      enum:
+      - P
+      - S
+    DividendInstruction:
+      type: string
+      enum:
+      - C
+      - R
+    AgentBankChargeType:
+      type: string
+      enum:
+      - XTRL
+      - BANK
+    DistributorChargeType:
+      type: string
+      enum:
+      - BRKF
+      - CHAR
+      - FEND
+      - COMM
+      - ADDF
+      - DLEV
+    AgentBankProcessCode:
+      type: string
+      description: "0000 : Successful <br /> 0010 : External party code not found\
+        \ <br /> 0011 : Please refer to member (bankrupt, medical grounds, a/c frozen)\
+        \ <br /> 0012 : Mismatch account number against CPFOA or Other Info <br />\
+        \ 0014 : Account closed <br /> 0015 : Insufficient funds for settlement <br\
+        \ /> 0016 : Mismatched identification number <br /> 9999 : Other reasons <br\
+        \ />"
+      enum:
+      - "0000"
+      - "0010"
+      - "0011"
+      - "0012"
+      - "0014"
+      - "0015"
+      - "0016"
+      - "9999"
+    Entity:
+      type: object
+      properties:
+        id:
+          type: integer
+        client_id:
+          type: integer
+        b2b_client_id:
+          type: integer
+        fsq_third_party_id:
+          type: integer
+        legal_name:
+          type: string
+        email:
+          type: string
+        ext_client_ref:
+          type: string
+    OnBehalfOrderRequest:
+      required:
+      - currency
+      - fundName
+      - isin
+      - type
+      - userId
+      type: object
+      properties:
+        userId:
+          type: integer
+        clientId:
+          type: integer
+        orderRef:
+          type: string
+          description: The unique reference of your Order in Fundnode
+        type:
+          type: string
+          description: "SUBS for subscription, REDM for Redemption"
+          enum:
+          - SUBS
+          - REDM
+        signature:
+          $ref: '#/components/schemas/OnBehalfOrderRequest_signature'
+        isin:
+          pattern: "^[A-Z]{2}[A-Z0-9]{9}[0-9]$"
+          type: string
+        fundName:
+          type: string
+        currency:
+          pattern: "^[[:alpha:]]{3}$"
+          type: string
+        amount:
+          type: number
+          format: double
+        nbUnits:
+          type: number
+          format: double
+        hasFees:
+          type: boolean
+        origin:
+          type: string
+          nullable: true
+        incomeSource:
+          $ref: '#/components/schemas/OnBehalfOrderRequest_incomeSource'
+        additionalInfo:
+          $ref: '#/components/schemas/OnBehalfOrderRequest_additionalInfo'
+        registerAcct:
+          type: string
+        switchRef:
+          type: string
+          description: Reference of the switch (empty if it's not a switch)
+          example: FDLT0ldn8w1jn2t2
+        feeName:
+          type: string
+          description: "name of the Fee - FEND,BEND.."
+          nullable: true
+        feeAmnt:
+          type: string
+          description: amount of the fee
+          nullable: true
+        feeAmntType:
+          type: string
+          description: type of the fee amount
+          nullable: true
+          example: PERCENTAGE
+          enum:
+          - PERCENTAGE
+          - AMNT
+      description: Create order for investor "userId" Find a user with proper permissions
+        in entity "clientId" if no userId specified
+    Fee:
+      required:
+      - feeAmnt
+      - feeName
+      type: object
+      properties:
+        feeName:
+          type: string
+        feeAmnt:
+          type: number
+          format: double
+    IncomeSource:
+      required:
+      - key
+      - value
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+    CreateAccountRequest:
+      type: object
+      properties:
+        password:
+          type: string
+        clientId:
+          type: integer
+          nullable: true
+          example: 100146
+        userId:
+          type: integer
+          nullable: true
+          example: 200556
+        type:
+          type: string
+          nullable: true
+          enum:
+          - R
+          - I
+    SuccessResponse:
+      required:
+      - statusMessage
+      type: object
+      properties:
+        statusMessage:
+          type: string
+    PortfolioRequest:
+      required:
+      - contractAddress
+      - ethAddress
+      - name
+      type: object
+      properties:
+        ethAddress:
+          type: string
+          description: ""
+        contractAddress:
+          type: string
+          description: ""
+        phoneNumber:
+          type: string
+          description: ""
+        name:
+          type: string
+          description: ""
+    DeployContractRequest:
+      required:
+      - name
+      - private
+      - privateFor
+      - uid
+      - uuid
+      type: object
+      properties:
+        uid:
+          type: string
+        name:
+          type: string
+        private:
+          type: boolean
+        privateFor:
+          type: array
+          items:
+            type: string
+        uuid:
+          type: string
+          description: used internally for calls synchronisation
+    SendTxRequest:
+      required:
+      - CtParams
+      - FuncName
+      - FuncParam
+      - PrivateFor
+      - Uuid
+      type: object
+      properties:
+        Hash:
+          type: string
+        IsDuplicate:
+          type: boolean
+        FuncName:
+          type: string
+        FuncParam:
+          type: string
+        CtParams:
+          $ref: '#/components/schemas/SendTxRequest_CtParams'
+        PrivateFor:
+          type: array
+          items:
+            type: string
+        Uuid:
+          type: string
+          description: used internally for calls synchronisation
+    User:
+      required:
+      - clientId
+      - email
+      - extUserId
+      - firstName
+      - lastName
+      - legalName
+      - mobilePhoneNumber
+      - password
+      - type
+      type: object
+      properties:
+        uid:
+          type: integer
+        email:
+          type: string
+        clientId:
+          type: integer
+        mobilePhoneNumber:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        legalName:
+          type: string
+          description: default to first_name + legal_name
+        jobTitle:
+          type: string
+        department:
+          type: string
+        manager:
+          type: string
+        password:
+          type: string
+        language:
+          type: string
+          description: ISO 639-1 (two-letter code)
+        theme:
+          type: string
+        deviceId:
+          type: string
+        extUserId:
+          type: string
+          description: "External USER ID (i.e. Auth0:'sub', AzureAD B2C:'oid')"
+        identityProvider:
+          pattern: ^AZUREB2C$|^AUTH0$|^FDLT$
+          type: string
+          description: using the provided identity provider to validate JWT token
+        sendInvitationMessage:
+          type: boolean
+          description: Indicates whether an email should be sent to the user being
+            invited. The default is false
+          default: false
+        isGuest:
+          type: boolean
+          description: Indicates whether a user is guest or not. The default is false
+          default: false
+        azApplicationId:
+          type: string
+          description: Azure Application ID
+        type:
+          type: string
+          description: user CAN be Retail or Institutional
+          enum:
+          - R
+          - I
+    OnBehalfOrdersResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/OnBehalfOrdersResponse_inner'
+    OnBehalfOrderResponse:
+      required:
+      - httpStatusCode
+      - ordrDt
+      - ordrRef
+      type: object
+      properties:
+        ordrRef:
+          type: string
+          description: The unique reference of your order in FundsDLT
+        ordrDt:
+          type: string
+          description: RFC 3339 format
+          format: date-time
+        httpStatusCode:
+          type: integer
+          nullable: false
+    KycDetail:
+      required:
+      - Current
+      - SessionId
+      - UserId
+      type: object
+      properties:
+        SessionId:
+          type: string
+          description: Unique session ID
+          example: bf1163c7-4c04-49fb-bf64-68da90a2d92f
+        UserId:
+          type: integer
+          description: Unique UserId
+          example: 150
+        Current:
+          type: boolean
+          description: Current version
+          example: true
+        Identification:
+          $ref: '#/components/schemas/KycDetail_Identification'
+        FATCA:
+          $ref: '#/components/schemas/KycDetail_FATCA'
+        Citizenship:
+          type: array
+          items:
+            $ref: '#/components/schemas/KycDetail_Citizenship'
+        Tax:
+          type: array
+          items:
+            $ref: '#/components/schemas/KycDetail_Tax'
+        Address:
+          type: array
+          items:
+            $ref: '#/components/schemas/KycDetail_Address'
+    Address:
+      required:
+      - City
+      - Cntry
+      - Id
+      - Line1
+      - PostCd
+      type: object
+      properties:
+        Id:
+          type: integer
+          description: record ID
+          example: 1
+        Line1:
+          maxLength: 100
+          minLength: 1
+          type: string
+          description: Address Line 1
+          example: 20 Rue Jules Fischer
+        Line2:
+          maxLength: 100
+          minLength: 1
+          type: string
+          description: Address Line 2
+          nullable: true
+          example: appt 2
+        Line3:
+          maxLength: 100
+          minLength: 1
+          type: string
+          description: Address Line 3
+          nullable: true
+          example: "-"
+        PostCd:
+          maxLength: 20
+          minLength: 1
+          type: string
+          description: Postal Code
+          example: "1522"
+        City:
+          maxLength: 100
+          minLength: 1
+          type: string
+          description: City
+          example: Luxembourg
+        Cntry:
+          maxLength: 2
+          minLength: 2
+          pattern: "^[A-Z]{2}$|^$"
+          type: string
+          description: Country
+          example: Luxembourg
+    Citizenship:
+      required:
+      - CitizenCntry
+      - Id
+      type: object
+      properties:
+        Id:
+          type: integer
+          description: record ID
+          example: 1
+        CitizenCntry:
+          maxLength: 2
+          minLength: 2
+          pattern: "^[A-Z]{2}$|^$"
+          type: string
+          description: Investor Citizenship
+          example: Luxembourg
+    FATCA:
+      required:
+      - UsPerson
+      type: object
+      properties:
+        UsPerson:
+          type: boolean
+          description: ""
+          example: false
+        FatcaStatus:
+          type: boolean
+          description: FATCA Status of the investor. Do they fall within the scope
+            of FATCA reporting?
+          nullable: true
+          example: false
+    Identification:
+      required:
+      - BirthCity
+      - BirthCntry
+      - FirstName
+      - Gender
+      - LastName
+      type: object
+      properties:
+        FirstName:
+          maxLength: 50
+          minLength: 2
+          type: string
+          description: Investor Firstname (Legal name)
+          example: John
+        LastName:
+          maxLength: 50
+          minLength: 2
+          type: string
+          description: Investor Surname (Legal name)
+          example: Doe
+        BirthDt:
+          type: string
+          description: Investor birth date
+          format: date-time
+          example: 2023-08-20T00:00:00Z
+        BirthCntry:
+          maxLength: 2
+          minLength: 2
+          pattern: "^[A-Z]{2}$|^$"
+          type: string
+          description: Birth Country
+          example: ES
+        MobilePhoneNumber:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: Mobile phone number of investor
+          nullable: true
+          example: "+3526212847565"
+        Gender:
+          pattern: ^Male$|^Female$|^Other$
+          type: string
+          description: Gender of investor
+          example: Female
+        BirthCity:
+          maxLength: 64
+          minLength: 1
+          type: string
+          description: Investor Birth City
+          example: Milano
+    Tax:
+      required:
+      - Cntry
+      - Id
+      - TxIDAvlbl
+      type: object
+      properties:
+        Id:
+          type: integer
+          description: record ID
+          example: 1
+        Cntry:
+          maxLength: 2
+          minLength: 2
+          pattern: "^[A-Z]{2}$|^$"
+          type: string
+          description: Country of TAX residence
+        Tin:
+          maxLength: 20
+          minLength: 0
+          type: string
+          description: Tax Identification Number (TIN)
+          nullable: true
+          example: "54545499214"
+        TxIDAvlbl:
+          type: boolean
+          description: Availability of tax ID
+          example: true
+    GraphQLResponse:
+      type: object
+      properties:
+        Data:
+          $ref: '#/components/schemas/GraphQLResponse_Data'
+    InitPortfolio:
+      type: object
+      properties:
+        ethAddr:
+          type: string
+        smartContract:
+          type: string
+    KafkaInvestorCreation:
+      required:
+      - ClientId
+      - Name
+      - UUID
+      - User
+      type: object
+      properties:
+        ClientId:
+          type: integer
+          description: Unique ID of client
+          nullable: false
+          example: 100256
+        Name:
+          type: string
+          nullable: false
+          example: UserCreated
+        UUID:
+          type: string
+          nullable: false
+          example: b613ba21-eaa7-4293-acdc-25f54ca0aa59
+        User:
+          $ref: '#/components/schemas/KafkaInvestorCreation_User'
+    KafkaDeployContract:
+      required:
+      - Address
+      - Data
+      - Hash
+      type: object
+      properties:
+        Hash:
+          type: string
+          nullable: false
+          example: e5e1d80aa3c31874508546d54d6d379eb7ba1eb8257e51a507b0cec5b451c30a
+        Data:
+          $ref: '#/components/schemas/KafkaDeployContract_Data'
+        Address:
+          type: string
+          nullable: false
+          example: 0xe80e87b6046ca618be891cf3b61847204b7e1974
+    KafkaDeployContractData:
+      required:
+      - name
+      - private
+      - uid
+      - uuid
+      type: object
+      properties:
+        uid:
+          type: string
+          example: "100064"
+        name:
+          type: string
+          example: Core
+        private:
+          type: boolean
+        uuid:
+          type: string
+          example: aec4ca98-b0be-4e1c-901c-c89569eaa703
+        privateFor:
+          type: array
+          items:
+            type: string
+            example: ei47y/dVbTivYCmP1gIueUYMqjltfY92hBKsZmgOXig=
+    KafkaSendTx:
+      required:
+      - Data
+      - Hash
+      - TxHash
+      type: object
+      properties:
+        Hash:
+          type: string
+          nullable: false
+          example: 54de42f2fa5d0418fcc23c7b6614987afa563db18cb8ab46047884695ebad67b
+        Data:
+          $ref: '#/components/schemas/KafkaSendTx_Data'
+        TxHash:
+          type: string
+          nullable: false
+          example: 0x3b77d10cbade3dcf2a9a0f7c6033eff9c27192fcbfff2bb789cf5189f80c01d9
+    KafkaSendTxData:
+      required:
+      - FuncName
+      - FuncParam
+      - PrivateFor
+      - Uuid
+      type: object
+      properties:
+        FuncParam:
+          type: string
+          example: "100219, 0xe8a0Fa1CC717daf69a90d655F9aD5d8557B8166D, 0xe7321b5b2fe2ea82ac7f1016d1ef28b582ebe6b1,\
+            \ CPFOA, 100072"
+        FuncName:
+          type: string
+          example: Core.__Core_Init
+        Uuid:
+          type: string
+          example: aec4ca98-b0be-4e1c-901c-c89569eaa703
+        PrivateFor:
+          type: array
+          items:
+            type: string
+            example: ei47y/dVbTivYCmP1gIueUYMqjltfY92hBKsZmgOXig=
+    PortfolioOnBehalfRequest:
+      required:
+      - clientId
+      - contractAddress
+      - ethAddress
+      - name
+      - type
+      - userId
+      type: object
+      properties:
+        clientId:
+          type: integer
+          description: Client Identifier
+          example: 100146
+        userId:
+          type: integer
+          description: User Identifier
+          example: 200056
+        type:
+          type: string
+          description: User type
+          enum:
+          - I
+          - R
+        ethAddress:
+          type: string
+        contractAddress:
+          type: string
+        phoneNumber:
+          type: string
+        name:
+          type: string
+          description: Name of the portfolio
+          example: CPFOA
+    UserType:
+      type: string
+      description: I for Instututional / R for Retail
+      enum:
+      - I
+      - R
+    Error:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    PaginatedStatus:
+      required:
+      - data
+      - pagination
+      type: object
+      properties:
+        pagination:
+          $ref: '#/components/schemas/PaginatedStatus_pagination'
+        data:
+          minItems: 0
+          type: array
+          items:
+            $ref: '#/components/schemas/PaginatedStatus_data'
+    PaginatedBulkStatus:
+      required:
+      - data
+      - pagination
+      type: object
+      properties:
+        pagination:
+          $ref: '#/components/schemas/PaginatedStatus_pagination'
+        data:
+          minItems: 0
+          type: array
+          items:
+            $ref: '#/components/schemas/PaginatedBulkStatus_data'
+    Pagination:
+      required:
+      - next
+      - page
+      - perPage
+      - prev
+      - total
+      - totalPage
+      type: object
+      properties:
+        total:
+          type: integer
+          format: int64
+        page:
+          type: integer
+          format: int64
+        perPage:
+          type: integer
+          format: int64
+        prev:
+          type: integer
+          format: int64
+        next:
+          type: integer
+          format: int64
+        totalPage:
+          type: integer
+          format: int64
+    SubmitOrderResponseItem:
+      required:
+      - correlationId
+      - distributorReferenceId
+      - fnReferenceId
+      - isPossibleDuplicate
+      - orderRef
+      - status
+      type: object
+      properties:
+        correlationId:
+          type: string
+          description: ID of the call
+          nullable: false
+          example: 1e6860c5-395f-4941-851e-6efa29fa3308
+        orderRef:
+          type: string
+          description: The unique reference of your Order in FundsDLT
+          nullable: false
+          example: FDLT0lcyv20loezb
+        distributorReferenceId:
+          type: string
+          description: Identification of transaction
+          nullable: false
+          example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb-0026
+        isPossibleDuplicate:
+          type: boolean
+          description: Identify as possible duplicate (if a record with same key already
+            exist) Key is based on fields "fnReferenceId + transactionType" Input
+            will not be managed if value is equals to TRUE
+          example: true
+        errorStatus:
+          type: string
+          description: Status of the error
+          example: INVALID RECEIVED INPUT
+        errorMessage:
+          type: string
+          description: Message of the error
+          example: WORKFLOW UT NOT MANAGE
+        status:
+          type: string
+          description: "Status of the submission PREP: Ongoing Process ERROR: Error\
+            \ occurs"
+          example: PREP
+        fnReferenceId:
+          type: string
+          example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb
+        identificationNumber:
+          type: string
+          example: 1e6860c5-395f-4941-851e-6efa29fa3308
+    OrderStateResponseItem:
+      required:
+      - correlationId
+      - fnReferenceId
+      - taProcessingStatus
+      type: object
+      properties:
+        correlationId:
+          type: string
+          description: ID of the call
+          nullable: false
+          example: 1e6860c5-395f-4941-851e-6efa29fa3308
+        fnReferenceId:
+          type: string
+          description: Fund Node Reference Identification
+          example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb
+        taProcessingStatus:
+          type: string
+          description: "Processing status (00 - Accepted, 01 - Accepted with warning,\
+            \ 99 - Rejected)"
+          example: "00"
+          enum:
+          - "00"
+          - "01"
+          - "99"
+        detailedMessage:
+          type: string
+          description: Detailed free text message on reasons for rejection
+          example: reason of the rejection
+    OrderConfirmationResponseItem:
+      required:
+      - correlationId
+      - fnReferenceId
+      - navDate
+      - price
+      type: object
+      properties:
+        correlationId:
+          type: string
+          description: ID of the call
+          nullable: false
+          example: 1e6860c5-395f-4941-851e-6efa29fa3308
+        fnReferenceId:
+          type: string
+          description: Fund Node Reference Identification
+          example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb
+        navDate:
+          pattern: "^\\d{4}\\d{2}\\d{2}$"
+          type: string
+          description: NAV date (available since CONF)
+          example: "20230106"
+        price:
+          type: string
+          description: NAV pricing used for unit allotment. Last 6 digits to be decimals
+            (available since CONF)
+          example: "123456"
+        taReferenceId:
+          type: string
+          description: TA's transaction reference ID (available since CONF)
+        taProcessCode:
+          type: string
+        unitsNb:
+          type: number
+          description: number of units confirmed
+          format: double
+        grossAmt:
+          type: number
+          description: confirmed gross amount
+          format: double
+        netAmt:
+          type: number
+          description: confirmed net amount
+          format: double
+        cashSttlDt:
+          pattern: "^\\d{4}\\d{2}\\d{2}$"
+          type: string
+          example: "20230106"
+    CorrelationId:
+      type: string
+      description: ID of the call
+      example: 1e6860c5-395f-4941-851e-6efa29fa3308
+    FnReferenceId:
+      type: string
+      description: Fund Node Reference Identification
+      example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb
+    TaProcessingStatus:
+      type: string
+      description: "Processing status (00 - Accepted, 01 - Accepted with warning,\
+        \ 99 - Rejected)"
+      example: "00"
+      enum:
+      - "00"
+      - "01"
+      - "99"
+    DetailedMessage:
+      type: string
+      description: Detailed free text message on reasons for rejection
+      example: reason of the rejection
+    Units:
+      type: string
+    OrderAmount:
+      type: string
+    NavDate:
+      pattern: "^\\d{4}\\d{2}\\d{2}$"
+      type: string
+      description: NAV date (available since CONF)
+      example: "20230106"
+    Price:
+      type: string
+      description: NAV pricing used for unit allotment. Last 6 digits to be decimals
+        (available since CONF)
+      example: "123456"
+    TaReferenceId:
+      type: string
+      description: TA's transaction reference ID (available since CONF)
+    TaProcessCode:
+      type: string
+    CashSttlDt:
+      pattern: "^\\d{4}\\d{2}\\d{2}$"
+      type: string
+      example: "20230106"
+    Investor:
+      required:
+      - clientId
+      - email
+      - extUserRef
+      type: object
+      properties:
+        uid:
+          type: integer
+        email:
+          type: string
+        clientId:
+          type: integer
+        mobilePhoneNumber:
+          type: string
+          description: ⚠️ Need to be provided if field 'withoutLogin' is set to false
+            or not provided
+        firstName:
+          type: string
+          description: ⚠️ Need to be provided if field 'withoutLogin' is set to false
+            or not provided
+        lastName:
+          type: string
+          description: ⚠️ Need to be provided if field 'withoutLogin' is set to false
+            or not provided
+        legalName:
+          type: string
+          description: default to first_name + legal_name
+        jobTitle:
+          type: string
+        department:
+          type: string
+        manager:
+          type: string
+        password:
+          type: string
+          description: ⚠️ Need to be provided if field 'withoutLogin' is set to false
+            or not provided
+        language:
+          type: string
+          description: ISO 639-1 (two-letter code)
+        theme:
+          type: string
+        deviceId:
+          type: string
+        extUserId:
+          type: string
+          description: "External USER ID (i.e. Auth0:'sub', AzureAD B2C:'oid')"
+        identityProvider:
+          pattern: ^AZUREB2C$|^AUTH0$|^FDLT$
+          type: string
+          description: using the provided identity provider to validate JWT token
+        sendInvitationMessage:
+          type: boolean
+          description: Indicates whether an email should be sent to the user being
+            invited. The default is false
+          default: false
+        isGuest:
+          type: boolean
+          description: Indicates whether a user is guest or not. The default is false
+          default: false
+        azApplicationId:
+          type: string
+          description: Azure Application ID
+        type:
+          type: string
+          description: user CAN be Retail or Institutional
+          enum:
+          - R
+          - I
+        extUserRef:
+          type: string
+        investorId:
+          type: integer
+        withoutLogin:
+          type: boolean
+          description: "If set to false or not provided, will generate azure b2c account,\
+            \ with false value, password and mobile phone are required."
+          default: false
+        kycStatus:
+          type: boolean
+          description: "If set to true, will setup the investor with a valid KYC status."
+          default: false
+    Step:
+      required:
+      - status
+      - type
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/Step_type'
+        status:
+          type: string
+          example: NotStarted
+          enum:
+          - NotStarted
+          - InProgress
+          - Closed
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Step_errors'
+        startDt:
+          type: string
+          format: date-time
+        endDt:
+          type: string
+          format: date-time
+    StepType:
+      required:
+      - type
+      - workflowType
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Id
+          format: int32
+        workflowType:
+          type: string
+          example: investor
+          enum:
+          - investor
+          - order
+        type:
+          type: string
+          example: CreateInvestor
+          enum:
+          - CreateInvestor
+          - CreateEthAccount
+          - DeployContract
+          - CreatePortfolio
+          - OrderOnBehalf
+    OrderedStepType:
+      required:
+      - clientId
+      - stepType
+      type: object
+      properties:
+        clientId:
+          type: integer
+          description: Id
+          format: int32
+        workflowAppName:
+          maxLength: 20
+          minLength: 1
+          type: string
+          description: Workflow Name
+          example: fm_cpfsa
+        order:
+          type: integer
+          description: Give Order of step
+          format: int32
+          example: 1
+        stepType:
+          $ref: '#/components/schemas/Step_type'
+    WorkflowType:
+      type: string
+      example: investor
+      enum:
+      - investor
+      - order
+    StepTypeType:
+      type: string
+      example: CreateInvestor
+      enum:
+      - CreateInvestor
+      - CreateEthAccount
+      - DeployContract
+      - CreatePortfolio
+      - OrderOnBehalf
+    StepStatus:
+      type: string
+      example: NotStarted
+      enum:
+      - NotStarted
+      - InProgress
+      - Closed
+    StepperSteps:
+      required:
+      - clientId
+      - stepsState
+      - workflowAppName
+      type: object
+      properties:
+        clientId:
+          type: integer
+          description: Id
+          format: int32
+        workflowAppName:
+          maxLength: 20
+          minLength: 1
+          type: string
+          description: Workflow Name
+          example: fm_cpfsa
+        stepsState:
+          minItems: 1
+          type: array
+          items:
+            $ref: '#/components/schemas/StepperSteps_stepsState'
+    StepsState:
+      required:
+      - index
+      - status
+      - steps
+      - subStatus
+      type: object
+      properties:
+        index:
+          type: integer
+          description: Index of the step
+        status:
+          type: string
+          example: NotStarted
+          enum:
+          - NotStarted
+          - InProgress
+          - Closed
+        subStatus:
+          type: string
+          enum:
+          - CREATE_INVESTOR
+          - CREATE_ETH_ACCOUNT
+          - DEPLOY_CONTRACT
+          - CREATE_PORTFOLIO
+          - ORDER_ONBEHALF
+        steps:
+          minItems: 1
+          type: array
+          items:
+            $ref: '#/components/schemas/StepperSteps_steps'
+    WorkflowAppName:
+      maxLength: 20
+      minLength: 1
+      type: string
+      description: Workflow Name
+      example: fm_cpfsa
+    SubStatus:
+      type: string
+      enum:
+      - CREATE_INVESTOR
+      - CREATE_ETH_ACCOUNT
+      - DEPLOY_CONTRACT
+      - CREATE_PORTFOLIO
+      - ORDER_ONBEHALF
+    Errors:
+      required:
+      - code
+      - msg
+      - type
+      type: object
+      properties:
+        code:
+          maxLength: 20
+          minLength: 1
+          type: string
+          description: Error code
+          example: '"AMLKYC01"'
+        type:
+          maxLength: 20
+          minLength: 1
+          pattern: ^Error$|^Warning$|^Message$
+          type: string
+          description: KYC Session pending for more then 30 minutes
+          example: Warning
+        msg:
+          maxLength: 255
+          minLength: 1
+          type: string
+          description: Error message
+          example: KYC Session pending for more then 30 minutes
+    MknRecordStepper:
+      required:
+      - clientId
+      - correlationId
+      - createdAt
+      - ordrRef
+      - shardedKey
+      - status
+      - steps
+      - subStatus
+      - updatedAt
+      type: object
+      properties:
+        shardedKey:
+          type: string
+          nullable: false
+        correlationId:
+          type: string
+          description: ID of the call
+          example: 1e6860c5-395f-4941-851e-6efa29fa3308
+        clientId:
+          type: integer
+          description: Id
+        userId:
+          type: integer
+          description: Id
+        ordrRef:
+          type: string
+          description: FDLT order reference
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        status:
+          type: string
+          example: NotStarted
+          enum:
+          - NotStarted
+          - InProgress
+          - Closed
+        subStatus:
+          type: string
+          enum:
+          - CREATE_INVESTOR
+          - CREATE_ETH_ACCOUNT
+          - DEPLOY_CONTRACT
+          - CREATE_PORTFOLIO
+          - ORDER_ONBEHALF
+        steps:
+          minItems: 1
+          type: array
+          items:
+            $ref: '#/components/schemas/StepperSteps_steps'
+    EntityQuorum:
+      required:
+      - clientId
+      - ethAccountAddr
+      - privateNodeKey
+      type: object
+      properties:
+        clientId:
+          type: integer
+          description: Unique ID of client
+          nullable: false
+          example: 100256
+        ethAccountAddr:
+          minLength: 1
+          type: string
+          description: Ethereum Address
+          nullable: false
+          example: 0xc08c713a757574a20d14160dc0a915e16f300d9b
+        privateNodeKey:
+          minLength: 1
+          type: string
+          description: Private key of the node
+          nullable: false
+          example: ei47y/dVbTivYCmfdjhsfkIueUYMqjgfdRRBKsZmgOXig=
+    ClientId:
+      type: integer
+      description: Unique ID of client
+      example: 100256
+    EthAccountAddr:
+      minLength: 1
+      type: string
+      description: Ethereum Address
+      example: 0xc08c713a757574a20d14160dc0a915e16f300d9b
+    PrivateNodeKey:
+      minLength: 1
+      type: string
+      description: Private key of the node
+      example: ei47y/dVbTivYCmfdjhsfkIueUYMqjgfdRRBKsZmgOXig=
+    Portfolio:
+      type: object
+      properties:
+        id:
+          type: string
+          description: portfolio uniq ID
+        uid:
+          type: integer
+          description: user id
+        cid:
+          type: integer
+          description: client id
+        eth_address:
+          type: string
+          description: ""
+        contract_address:
+          type: string
+          description: ""
+        phone_number:
+          type: string
+          description: ""
+        name:
+          type: string
+          description: ""
+    ValidationRule:
+      required:
+      - Category
+      - ErrorMessages
+      - IsBlocking
+      - IsError
+      - IsWarning
+      - Message
+      - Rulecode
+      type: object
+      properties:
+        Rulecode:
+          type: string
+        Message:
+          type: string
+        Category:
+          type: string
+        IsError:
+          type: boolean
+        IsWarning:
+          type: boolean
+        IsBlocking:
+          type: boolean
+        IsToBeApplied:
+          type: boolean
+          nullable: true
+        ErrorMessages:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationRule_ErrorMessages'
+        Errors:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/ValidationRule_Errors'
+    Account:
+      required:
+      - AccountType
+      - BeneficiaryNm
+      - Bic
+      - Ccy
+      - IsDefault
+      - IsMine
+      - LedgerInd
+      - Name
+      - Status
+      type: object
+      properties:
+        Id:
+          type: integer
+          description: Bank account identifier
+          format: int64
+        Name:
+          type: string
+          description: Bank account name
+        BeneficiaryNm:
+          type: string
+          description: Bank account Beneficiary name
+        Iban:
+          type: string
+          description: International Bank Account Number (IBAN) Not required for non
+            EUR currencies / must have either IBAN or AccountNumber
+          nullable: true
+        AccountNumber:
+          maxLength: 34
+          type: string
+          description: Account Number to replace Iban. / must have either IBAN or
+            AccountNumber
+          nullable: true
+        Bic:
+          type: string
+          description: Bank Identifier Code (BIC)
+        Ccy:
+          pattern: "^[A-Z]{3}$"
+          type: string
+          description: Currency of Account or Amount. ISO 4217 alpha-3 - 3 letters
+            upcase e.g EUR
+        IsMine:
+          type: boolean
+          description: Whether this account is the user's account or not
+        IsDefault:
+          type: boolean
+          description: Whether this account is the default one by Type or not
+        IdUtil:
+          type: integer
+          nullable: true
+        AccountType:
+          type: string
+          enum:
+          - INVESTOR
+          - COLLECTION
+          - FUND
+          - COMMISSION
+          - TAX
+          - DIVIDEND
+          - FX
+          - DONATION
+          - FISC
+          - TAXR
+        LedgerInd:
+          type: boolean
+        PspTpId:
+          type: integer
+          description: PspTpId if the account is DEBITOR
+          nullable: true
+        LegalAddress:
+          type: string
+          description: Beneficiary Legal Address
+          nullable: true
+        Status:
+          type: string
+          enum:
+          - ACTIVE
+          - NOT_ACTIVE
+        Country:
+          type: string
+        CreatedAt:
+          type: string
+          format: date-time
+        UpdatedAt:
+          type: string
+          format: date-time
+        ExpiryDt:
+          type: string
+          format: date-time
+        SEPACdtrId:
+          type: string
+        SEPAMndtId:
+          type: string
+        SEPAMndtDtOfSgntr:
+          type: string
+          format: date-time
+        BankAcctValidationInd:
+          type: boolean
+          nullable: true
+        CorrespondentBankAcctBic:
+          type: string
+          description: Bank Identifier Code (BIC) for the correspondent bank
+    Nav:
+      required:
+      - ccy
+      - dryRun
+      - fndCd
+      - valuationNAV
+      - valuationNAVDate
+      type: object
+      properties:
+        valuationNAV:
+          type: string
+        valuationNAVDate:
+          type: string
+          description: deprecated
+          format: date-time
+          deprecated: true
+        ccy:
+          type: string
+        fndCd:
+          type: string
+        dryRun:
+          type: boolean
+        orderFilter:
+          type: array
+          items:
+            type: string
+        cashSttlDt:
+          type: string
+          format: date-time
+        sttlDt:
+          type: string
+          format: date-time
+        tradeDt:
+          type: string
+          format: date-time
+        unitsNb:
+          type: number
+          description: number of units confirmed
+          format: double
+        amt:
+          type: number
+          description: confirmed amount
+          format: double
+        grossAmt:
+          type: number
+          format: double
+        netAmt:
+          type: number
+          format: double
+        fees:
+          type: array
+          items:
+            $ref: '#/components/schemas/submitOrderConfirmation_fees'
+    ConfirmOrderCommandJSON:
+      required:
+      - _id
+      - amt
+      - ccy
+      - nav
+      - ordrRef
+      - unitsNb
+      - valueDate
+      type: object
+      properties:
+        _id:
+          type: string
+        hash:
+          type: string
+        occurs:
+          type: integer
+        ordrRef:
+          type: string
+        amt:
+          type: number
+          format: double
+        ccy:
+          type: string
+        nav:
+          type: number
+          format: double
+        unitsNb:
+          type: number
+          format: double
+        sharesUnits:
+          type: number
+          format: double
+        valueDate:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      description: a confirm order has always amt + nav + unitsNb
+    Universe:
+      required:
+      - FndFmlyIds
+      - Name
+      - ShrsClIds
+      - SubFndIds
+      - _ID
+      type: object
+      properties:
+        _ID:
+          maximum: 255
+          type: string
+          description: Unique identifier
+        Created:
+          type: string
+          description: When the universe was created
+          format: date-time
+        Owner:
+          type: string
+          description: The entity ID that created this universe
+          format: string
+        Entities:
+          type: array
+          items:
+            type: integer
+            description: Entities ID being part of the universe
+        Name:
+          maxLength: 255
+          type: string
+          description: Identifier of owner of the universe
+        FndFmlyIds:
+          type: array
+          description: Fundfamilies being part of the universe
+          items:
+            type: string
+        Status:
+          type: string
+          description: The status this universe is (either )
+        SubFndIds:
+          type: array
+          description: Subfunds being part of the universe
+          items:
+            type: string
+        ShrsClIds:
+          type: array
+          description: Shareclasses being part of the universe
+          items:
+            type: string
+        ClId:
+          type: integer
+          description: Classes being part of the universe
+        CtryISO2:
+          maxLength: 2
+          type: string
+          description: Filters the universe to the shareclasses registered in the
+            defined Country
+    ShrsCl:
+      required:
+      - CreatedBy
+      - EffectDtTm
+      - EntityID
+      - ID
+      - ISIN
+      - IdClass
+      - IdFndFmly
+      - IdSubFund
+      - Validated
+      type: object
+      properties:
+        ID:
+          type: string
+          description: Unique identifier ShareClass
+        EntityID:
+          type: integer
+          description: The entity ID who created this shareclass
+        CreatedBy:
+          type: string
+          description: User id who created this instrument
+        IdFndFmly:
+          type: string
+          description: Unique identifier Fund Family
+        IdSubFund:
+          type: string
+          description: Unique identifier SubFund
+        IdCLass:
+          type: string
+          description: Unique identifier Class
+        ISIN:
+          pattern: "^([A-Z]){2}([0-9A-Z]{9})([0-9]{1})$"
+          type: string
+        CUSIP:
+          pattern: "^[0-9|A-Z]{9}$"
+          type: string
+          description: CUSIP
+        Updated:
+          type: string
+          description: When was this instrument updated
+          format: date-time
+        VALOR:
+          type: integer
+          description: Valor
+          format: int32
+        Validated:
+          type: boolean
+          description: Is this shareclass validated with a 4 eyes check
+        WKN:
+          maxLength: 50
+          type: string
+          description: WKN
+        BLOOMBERG:
+          maxLength: 50
+          type: string
+          description: Bloomberg Code
+        SEDOL:
+          maxLength: 50
+          type: string
+          description: SEDOL
+        ShrsCsldKy:
+          maxLength: 50
+          type: string
+          description: Share Class Consolidation Key
+        FullShrsClNm:
+          maxLength: 255
+          type: string
+          description: Full Share Class Name
+          example: Keyfacts.frhs.FndFmlyNm+ +Keyfacts.frhs.SubFndNm+ +Keyfacts.frhs.FndNm
+        ShrtFullShClsNm:
+          maxLength: 255
+          type: string
+          description: Abbreviated Share Class Name
+        ShrsClExt:
+          maxLength: 50
+          type: string
+          description: Share Class Extension
+        ShrsClDistPlcy:
+          pattern: ^accumulating$|^accumulating & distributing$|^distributing$
+          type: string
+          description: Share Class Distribution Policy
+        EffectDtTm:
+          type: string
+          description: Data record is valid from DateTime
+          format: date-time
+        DataDtTm:
+          type: string
+          description: Data record has been sourced DateTime
+          format: date-time
+        InjectDtTm:
+          type: string
+          description: Data record has been injected DateTime
+          format: date-time
+        DataHash:
+          maxLength: 256
+          type: string
+          description: Hash of serialized data
+        Current:
+          type: boolean
+          description: Current active version
+        Operation:
+          maxLength: 1024
+          type: string
+          description: Description of operation having injected record
+        DtRcdSftDel:
+          type: string
+          description: Datatime record was soft deleted
+          format: date-time
+    OrderStatus:
+      type: string
+      enum:
+      - accepted
+      - rejected
+    RejectReasonBody:
+      type: object
+      properties:
+        rejectReason:
+          type: string
+          description: rejection reason
+    OrderRejectRequest:
+      type: object
+      properties:
+        rejectReason:
+          type: string
+          description: rejection reason
+    OrderTradingDatesWrapper:
+      required:
+      - createdAt
+      - cutOffTm
+      - eventDt
+      - expectedCashSttlDt
+      - expectedSttlDt
+      - expectedTradeDt
+      - fndcd
+      - navRcptDt
+      - orderDt
+      - orderTp
+      - ordrRef
+      - valoDt
+      - valueDate
+      type: object
+      properties:
+        ordrRef:
+          type: string
+        cutOffTm:
+          type: string
+          example: 18:30
+        cutOffDt:
+          type: string
+          example: 18:30
+        updatedAt:
+          type: string
+          format: date-time
+        expectedTradeDt:
+          type: string
+          format: date-time
+        tradeDt:
+          type: string
+          format: date-time
+        expectedorfinalTradeDt:
+          type: string
+          format: date-time
+        expectedCashSttlDt:
+          type: string
+          format: date-time
+        cashSttlDt:
+          type: string
+          format: date-time
+        navRcptDt:
+          type: string
+          format: date-time
+        expectedSttlDt:
+          type: string
+          format: date-time
+        sttlDt:
+          type: string
+          format: date-time
+        valueDate:
+          type: string
+          format: date-time
+        valoDt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        fndcd:
+          type: string
+        ccy:
+          type: string
+        orderTp:
+          type: string
+        eventDt:
+          type: string
+          format: date-time
+        orderDt:
+          type: string
+          format: date-time
+    ErrorMess:
+      required:
+      - MessCode
+      - Message
+      type: object
+      properties:
+        MessCode:
+          type: string
+        Message:
+          type: string
+    ErrMessage:
+      required:
+      - ErrorCode
+      - ErrorMessage
+      type: object
+      properties:
+        ErrorCode:
+          type: string
+        ErrorMessage:
+          type: string
+        SolutionInfo1:
+          type: string
+        SolutionInfo2:
+          type: string
+    FDLT-ERR-CODE:
+      type: string
+      enum:
+      - MKNB-XXXXX-0000
+      - MKNB-XX-SWITCH-0001
+      - MKNB-XX-STXXX-0000
+      - MKNB-XX-STXXX-0001
+      - MKNB-XX-STXXX-0002
+      - MKNB-XX-STXXX-0003
+      - MKNB-XX-STXXX-0004
+      - MKNB-XX-STXXX-0005
+      - MKNB-XX-STXXX-0006
+      - MKNB-XX-STXXX-0007
+      - MKNB-XX-STXXX-0008
+      - MKNB-XX-STXXX-0009
+      - MKNB-XX-STXXX-0010
+      - MKNB-FM-ST000-0001
+      - MKNB-FM-ST000-0002
+      - MKNB-FM-ST000-0004
+      - MKNB-FM-ST000-0005
+      - MKNB-UT-ST000-0001
+      - MKNB-UT-ST000-0002
+      - MKNB-UT-ST000-0004
+      - MKNB-UT-ST000-0005
+      - MKNB-FM-ST001-0001
+      - MKNB-UT-ST001-0001
+      - MKNB-FM-ST002-0003
+      - MKNB-UT-ST002-0003
+      - MKNB-FM-ST003-0001
+      - MKNB-FM-ST003-0002
+      - MKNB-UT-ST003-0001
+      - MKNB-UT-ST003-0002
+      - MKNB-FM-ST004-0001
+      - MKNB-UT-ST004-0001
+      - MKNB-CMN-ST000-0001
+      - MKNB-CMN-ST000-0002
+      - MKNB-CMN-ST000-0003
+      - MKNB-CMN-ST000-0004
+      - MKNB-CMN-ST000-0005
+      - MKNB-CMN-ST000-0006
+      - MKNB-CMN-ST000-0009
+      - MKNB-CMN-ST000-0010
+      - MKNB-CMN-ST000-0011
+      - MKNB-CANC-0000
+      - MKNB-CANC-0001
+      - MKNB-CANC-0002
+    Signature:
+      required:
+      - data
+      - recovery
+      type: object
+      properties:
+        data:
+          type: string
+          description: signed data
+        recovery:
+          type: integer
+          enum:
+          - 0
+          - 1
+    AdditionalInfo:
+      type: object
+      properties:
+        savingPlanId:
+          type: string
+        feeMap:
+          type: array
+          items:
+            $ref: '#/components/schemas/submitOrderConfirmation_fees'
+        b2bClientId:
+          type: integer
+        incomeSource:
+          $ref: '#/components/schemas/OnBehalfOrderRequest_incomeSource'
+        dealType:
+          type: string
+          description: "Normal or Sepa (NORM, SEPA)"
+          enum:
+          - NORM
+          - SEPA
+        rejectReason:
+          type: string
+          description: rejection reason in case of order cancel
+        bankAccountId:
+          type: integer
+          description: bankAccountId of the order
+        bankAccountName:
+          type: string
+        bankAccountNumber:
+          type: string
+        iban:
+          type: string
+        bic:
+          type: string
+        taAccountId:
+          type: string
+          description: taAccountId of the order
+          example: ABC123456879
+        wrkfName:
+          type: string
+          description: Workflow Name of the order
+          example: fm_cash-omnibus
+    submitOrderLine_body:
+      required:
+      - accountType
+      - batchNumber
+      - distributorCode
+      - distributorFee
+      - distributorReferenceId
+      - dividendInstruction
+      - fnReferenceId
+      - fundCurrency
+      - investmentType
+      - isinCode
+      - paymentCurrency
+      - sendDate
+      - sendTime
+      - senderCode
+      - switchTransaction
+      - taAccountNumber
+      - transactionType
+      type: object
+      properties:
+        batchNumber:
+          type: string
+          example: FUND001
+        senderCode:
+          type: string
+          example: F50014
+        sendDate:
+          type: string
+          example: "20230106"
+        sendTime:
+          type: string
+          example: "152054"
+        fnReferenceId:
+          type: string
+          example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb
+        cpfAccountNumber:
+          type: string
+          example: "123432435"
+        idType:
+          type: string
+          enum:
+          - NRIC
+          - FIN
+          - Passport
+        plAmount:
+          type: string
+        costAmount:
+          type: string
+        investmentType:
+          type: string
+          enum:
+          - UT
+          - FM
+          - FC
+        distributorCode:
+          type: string
+          example: F50006
+        taAccountNumber:
+          type: string
+          example: DACODEFRTA115
+        distributorReferenceId:
+          type: string
+          example: f5127a1c-6304-4994-aeac-f6d4d008b389
+        transactionType:
+          type: string
+          enum:
+          - P
+          - S
+        isinCode:
+          type: string
+          example: SG9999003412
+        units:
+          type: string
+        orderAmount:
+          type: string
+        fundCurrency:
+          type: string
+          example: SGD
+        rsp:
+          type: string
+          enum:
+          - "Y"
+          - "N"
+        accountType:
+          type: string
+          enum:
+          - CASH-INDIVIDUAL
+          - CASH-OMNIBUS
+          - CPFOA
+          - CPFSA
+          - SRS
+        cpfissrsAccountNumber:
+          type: string
+          example: "999999999"
+        taxIdNumber:
+          type: string
+          example: "12345678"
+        endInvestorName:
+          type: string
+          example: Baey Kang Min
+        nationality:
+          type: string
+          example: SG
+        dateOfBirth:
+          pattern: "^\\d{4}\\d{2}\\d{2}$"
+          type: string
+          example: "19800104"
+        addressLine1:
+          type: string
+          example: 520 SIMS AVENUE#02-09
+        addressLine2:
+          type: string
+          example: 520 SIMS AVENUE#02-09
+        addressLine3:
+          type: string
+          example: 520 SIMS AVENUE#02-09
+        postalCode:
+          type: string
+        countryCode:
+          type: string
+        contactNumber:
+          type: string
+          example: "67384380"
+        fatcaStatus:
+          type: string
+          enum:
+          - "N"
+          - O
+          - "Y"
+          - P
+          - X
+          - R
+        countryTaxResidency:
+          type: string
+          example: SG
+        dividendInstruction:
+          type: string
+          enum:
+          - C
+          - R
+        agentBankChargeType:
+          type: string
+          enum:
+          - XTRL
+          - BANK
+        distributorChargeType:
+          type: string
+          enum:
+          - BRKF
+          - CHAR
+          - FEND
+          - COMM
+          - ADDF
+          - DLEV
+        paymentCurrency:
+          type: string
+        switchTransaction:
+          type: string
+          enum:
+          - "Y"
+          - "N"
+        agentBank:
+          type: string
+        identificationNumber:
+          type: string
+          example: S12345678F
+        distributorFee:
+          type: string
+          description: "if 200, represent 2% (2 digits to be decimal)"
+          example: "200"
+        distributorClientAccountNumber:
+          type: string
+          description: Populate distrbutor's internal client account number
+    inline_response_200:
+      required:
+      - correlationId
+      - distributorReferenceId
+      - fnReferenceId
+      - isPossibleDuplicate
+      - orderRef
+      - status
+      type: object
+      properties:
+        correlationId:
+          type: string
+          description: ID of the call
+          nullable: false
+          example: 1e6860c5-395f-4941-851e-6efa29fa3308
+        orderRef:
+          type: string
+          description: The unique reference of your Order in FundsDLT
+          nullable: false
+          example: FDLT0lcyv20loezb
+        distributorReferenceId:
+          type: string
+          description: Identification of transaction
+          nullable: false
+          example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb-0026
+        isPossibleDuplicate:
+          type: boolean
+          description: Identify as possible duplicate (if a record with same key already
+            exist) Key is based on fields "fnReferenceId + transactionType" Input
+            will not be managed if value is equals to TRUE
+          example: true
+        errorStatus:
+          type: string
+          description: Status of the error
+          example: INVALID RECEIVED INPUT
+        errorMessage:
+          type: string
+          description: Message of the error
+          example: WORKFLOW UT NOT MANAGE
+        status:
+          type: string
+          description: "Status of the submission PREP: Ongoing Process ERROR: Error\
+            \ occurs"
+          example: PREP
+        fnReferenceId:
+          type: string
+          example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb
+        identificationNumber:
+          type: string
+          example: 1e6860c5-395f-4941-851e-6efa29fa3308
+    submitAgentBankApproval_body:
+      required:
+      - agentBankProcessCode
+      - distributorCode
+      - distributorReferenceId
+      - fnReferenceId
+      - processingDate
+      type: object
+      properties:
+        distributorCode:
+          type: string
+          example: F50006
+        distributorReferenceId:
+          type: string
+          example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb-0026
+        fnReferenceId:
+          type: string
+          example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb
+        processingDate:
+          pattern: "^\\d{4}\\d{2}\\d{2}$"
+          type: string
+          example: "20230106"
+        agentBankReferenceId:
+          type: string
+        agentBankProcessCode:
+          type: string
+          description: "0000 : Successful <br /> 0010 : External party code not found\
+            \ <br /> 0011 : Please refer to member (bankrupt, medical grounds, a/c\
+            \ frozen) <br /> 0012 : Mismatch account number against CPFOA or Other\
+            \ Info <br /> 0014 : Account closed <br /> 0015 : Insufficient funds for\
+            \ settlement <br /> 0016 : Mismatched identification number <br /> 9999\
+            \ : Other reasons <br />"
+          enum:
+          - "0000"
+          - "0010"
+          - "0011"
+          - "0012"
+          - "0014"
+          - "0015"
+          - "0016"
+          - "9999"
+    inline_response_200_1:
+      required:
+      - data
+      - pagination
+      type: object
+      properties:
+        pagination:
+          $ref: '#/components/schemas/PaginatedStatus_pagination'
+        data:
+          minItems: 0
+          type: array
+          items:
+            $ref: '#/components/schemas/PaginatedStatus_data'
+    inline_response_400:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    inline_response_200_2:
+      required:
+      - data
+      - pagination
+      type: object
+      properties:
+        pagination:
+          $ref: '#/components/schemas/PaginatedStatus_pagination'
+        data:
+          minItems: 0
+          type: array
+          items:
+            $ref: '#/components/schemas/PaginatedBulkStatus_data'
+    submitOrderConfirmation_fees:
+      required:
+      - feeAmnt
+      - feeName
+      type: object
+      properties:
+        feeName:
+          type: string
+        feeAmnt:
+          type: number
+          format: double
+    submitOrderConfirmation_body:
+      required:
+      - fnReferenceId
+      - navDate
+      - price
+      type: object
+      properties:
+        fnReferenceId:
+          type: string
+          description: Fund Node Reference Identification
+          example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb
+        orderAmount:
+          type: string
+        navDate:
+          pattern: "^\\d{4}\\d{2}\\d{2}$"
+          type: string
+          description: NAV date (available since CONF)
+          example: "20230106"
+        price:
+          type: string
+          description: NAV pricing used for unit allotment. Last 6 digits to be decimals
+            (available since CONF)
+          example: "123456"
+        taReferenceId:
+          type: string
+          description: TA's transaction reference ID (available since CONF)
+        taProcessCode:
+          type: string
+        unitsNb:
+          type: number
+          description: number of units confirmed
+          format: double
+        grossAmt:
+          type: number
+          description: confirmed gross amount
+          format: double
+        netAmt:
+          type: number
+          description: confirmed net amount
+          format: double
+        fees:
+          type: array
+          description: list of confirmed fees
+          items:
+            $ref: '#/components/schemas/submitOrderConfirmation_fees'
+        cashSttlDt:
+          pattern: "^\\d{4}\\d{2}\\d{2}$"
+          type: string
+          example: "20230106"
+    inline_response_200_3:
+      required:
+      - correlationId
+      - fnReferenceId
+      - navDate
+      - price
+      type: object
+      properties:
+        correlationId:
+          type: string
+          description: ID of the call
+          nullable: false
+          example: 1e6860c5-395f-4941-851e-6efa29fa3308
+        fnReferenceId:
+          type: string
+          description: Fund Node Reference Identification
+          example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb
+        navDate:
+          pattern: "^\\d{4}\\d{2}\\d{2}$"
+          type: string
+          description: NAV date (available since CONF)
+          example: "20230106"
+        price:
+          type: string
+          description: NAV pricing used for unit allotment. Last 6 digits to be decimals
+            (available since CONF)
+          example: "123456"
+        taReferenceId:
+          type: string
+          description: TA's transaction reference ID (available since CONF)
+        taProcessCode:
+          type: string
+        unitsNb:
+          type: number
+          description: number of units confirmed
+          format: double
+        grossAmt:
+          type: number
+          description: confirmed gross amount
+          format: double
+        netAmt:
+          type: number
+          description: confirmed net amount
+          format: double
+        cashSttlDt:
+          pattern: "^\\d{4}\\d{2}\\d{2}$"
+          type: string
+          example: "20230106"
+    submitOrderState_body:
+      required:
+      - fnReferenceId
+      - taProcessingStatus
+      type: object
+      properties:
+        fnReferenceId:
+          type: string
+          description: Fund Node Reference Identification
+          example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb
+        taProcessingStatus:
+          type: string
+          description: "Processing status (00 - Accepted, 01 - Accepted with warning,\
+            \ 99 - Rejected)"
+          example: "00"
+          enum:
+          - "00"
+          - "01"
+          - "99"
+        detailedMessage:
+          type: string
+          description: Detailed free text message on reasons for rejection
+          example: reason of the rejection
+    inline_response_200_4:
+      required:
+      - correlationId
+      - fnReferenceId
+      - taProcessingStatus
+      type: object
+      properties:
+        correlationId:
+          type: string
+          description: ID of the call
+          nullable: false
+          example: 1e6860c5-395f-4941-851e-6efa29fa3308
+        fnReferenceId:
+          type: string
+          description: Fund Node Reference Identification
+          example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb
+        taProcessingStatus:
+          type: string
+          description: "Processing status (00 - Accepted, 01 - Accepted with warning,\
+            \ 99 - Rejected)"
+          example: "00"
+          enum:
+          - "00"
+          - "01"
+          - "99"
+        detailedMessage:
+          type: string
+          description: Detailed free text message on reasons for rejection
+          example: reason of the rejection
+    submitOrderCancellation_body:
+      required:
+      - fnReferenceId
+      type: object
+      properties:
+        fnReferenceId:
+          type: string
+          description: Fund Node Reference Identification
+          example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb
+    inline_response_200_5:
+      required:
+      - cancellation
+      - fnReferenceId
+      - orderRef
+      type: object
+      properties:
+        fnReferenceId:
+          type: string
+          description: Fund Node Reference Identification
+          example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb
+        orderRef:
+          maxItems: 2
+          minItems: 1
+          type: array
+          items:
+            type: string
+            description: The unique reference of your Order in FundsDLT
+            nullable: false
+            example: FDLT0lcyv20loezb
+        cancellation:
+          $ref: '#/components/schemas/OrderCancellationResponse_cancellation'
+    OrderCancellationResponse_cancellation:
+      required:
+      - cancellationRequestDateTime
+      - fdltCancellationStatus
+      type: object
+      properties:
+        cancellationRequestDateTime:
+          type: string
+          description: RFC 3339 format
+          format: date-time
+          example: 2023-04-25T14:27:08.133Z
+        fdltCancellationStatus:
+          type: string
+          description: Cancellation status on FDLT side
+          example: REJECTED
+          enum:
+          - ACCEPTED
+          - REJECTED
+          - PENDING
+        fdltRejectReason:
+          type: string
+          description: Reason of the rejection on FDLT side
+          example: Cancellation received after COT
+      description: Information about cancellation
+    OnBehalfOrderRequest_signature:
+      required:
+      - data
+      - recovery
+      type: object
+      properties:
+        data:
+          type: string
+          description: signed data
+        recovery:
+          type: integer
+          enum:
+          - 0
+          - 1
+    OnBehalfOrderRequest_incomeSource:
+      required:
+      - key
+      - value
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+    OnBehalfOrderRequest_additionalInfo:
+      type: object
+      properties:
+        savingPlanId:
+          type: string
+        feeMap:
+          type: array
+          items:
+            $ref: '#/components/schemas/submitOrderConfirmation_fees'
+        b2bClientId:
+          type: integer
+        incomeSource:
+          $ref: '#/components/schemas/OnBehalfOrderRequest_incomeSource'
+        dealType:
+          type: string
+          description: "Normal or Sepa (NORM, SEPA)"
+          enum:
+          - NORM
+          - SEPA
+        rejectReason:
+          type: string
+          description: rejection reason in case of order cancel
+        bankAccountId:
+          type: integer
+          description: bankAccountId of the order
+        bankAccountName:
+          type: string
+        bankAccountNumber:
+          type: string
+        iban:
+          type: string
+        bic:
+          type: string
+        taAccountId:
+          type: string
+          description: taAccountId of the order
+          example: ABC123456879
+        wrkfName:
+          type: string
+          description: Workflow Name of the order
+          example: fm_cash-omnibus
+    SendTxRequest_CtParams:
+      type: object
+      properties:
+        From:
+          type: string
+        Password:
+          type: string
+        ContractAddress:
+          type: string
+    OnBehalfOrdersResponse_inner:
+      required:
+      - httpStatusCode
+      - ordrDt
+      - ordrRef
+      type: object
+      properties:
+        ordrRef:
+          type: string
+          description: The unique reference of your order in FundsDLT
+        ordrDt:
+          type: string
+          description: RFC 3339 format
+          format: date-time
+        httpStatusCode:
+          type: integer
+          nullable: false
+    KycDetail_Identification:
+      required:
+      - BirthCity
+      - BirthCntry
+      - FirstName
+      - Gender
+      - LastName
+      type: object
+      properties:
+        FirstName:
+          maxLength: 50
+          minLength: 2
+          type: string
+          description: Investor Firstname (Legal name)
+          example: John
+        LastName:
+          maxLength: 50
+          minLength: 2
+          type: string
+          description: Investor Surname (Legal name)
+          example: Doe
+        BirthDt:
+          type: string
+          description: Investor birth date
+          format: date-time
+          example: 2023-08-20T00:00:00Z
+        BirthCntry:
+          maxLength: 2
+          minLength: 2
+          pattern: "^[A-Z]{2}$|^$"
+          type: string
+          description: Birth Country
+          example: ES
+        MobilePhoneNumber:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: Mobile phone number of investor
+          nullable: true
+          example: "+3526212847565"
+        Gender:
+          pattern: ^Male$|^Female$|^Other$
+          type: string
+          description: Gender of investor
+          example: Female
+        BirthCity:
+          maxLength: 64
+          minLength: 1
+          type: string
+          description: Investor Birth City
+          example: Milano
+    KycDetail_FATCA:
+      required:
+      - UsPerson
+      type: object
+      properties:
+        UsPerson:
+          type: boolean
+          description: ""
+          example: false
+        FatcaStatus:
+          type: boolean
+          description: FATCA Status of the investor. Do they fall within the scope
+            of FATCA reporting?
+          nullable: true
+          example: false
+    KycDetail_Citizenship:
+      required:
+      - CitizenCntry
+      - Id
+      type: object
+      properties:
+        Id:
+          type: integer
+          description: record ID
+          example: 1
+        CitizenCntry:
+          maxLength: 2
+          minLength: 2
+          pattern: "^[A-Z]{2}$|^$"
+          type: string
+          description: Investor Citizenship
+          example: Luxembourg
+    KycDetail_Tax:
+      required:
+      - Cntry
+      - Id
+      - TxIDAvlbl
+      type: object
+      properties:
+        Id:
+          type: integer
+          description: record ID
+          example: 1
+        Cntry:
+          maxLength: 2
+          minLength: 2
+          pattern: "^[A-Z]{2}$|^$"
+          type: string
+          description: Country of TAX residence
+        Tin:
+          maxLength: 20
+          minLength: 0
+          type: string
+          description: Tax Identification Number (TIN)
+          nullable: true
+          example: "54545499214"
+        TxIDAvlbl:
+          type: boolean
+          description: Availability of tax ID
+          example: true
+    KycDetail_Address:
+      required:
+      - City
+      - Cntry
+      - Id
+      - Line1
+      - PostCd
+      type: object
+      properties:
+        Id:
+          type: integer
+          description: record ID
+          example: 1
+        Line1:
+          maxLength: 100
+          minLength: 1
+          type: string
+          description: Address Line 1
+          example: 20 Rue Jules Fischer
+        Line2:
+          maxLength: 100
+          minLength: 1
+          type: string
+          description: Address Line 2
+          nullable: true
+          example: appt 2
+        Line3:
+          maxLength: 100
+          minLength: 1
+          type: string
+          description: Address Line 3
+          nullable: true
+          example: "-"
+        PostCd:
+          maxLength: 20
+          minLength: 1
+          type: string
+          description: Postal Code
+          example: "1522"
+        City:
+          maxLength: 100
+          minLength: 1
+          type: string
+          description: City
+          example: Luxembourg
+        Cntry:
+          maxLength: 2
+          minLength: 2
+          pattern: "^[A-Z]{2}$|^$"
+          type: string
+          description: Country
+          example: Luxembourg
+    GraphQLResponse_Data:
+      type: object
+      properties:
+        ethAddr:
+          type: string
+        smartContract:
+          type: string
+    KafkaInvestorCreation_User:
+      required:
+      - clientId
+      - email
+      - extUserRef
+      type: object
+      properties:
+        uid:
+          type: integer
+        email:
+          type: string
+        clientId:
+          type: integer
+        mobilePhoneNumber:
+          type: string
+          description: ⚠️ Need to be provided if field 'withoutLogin' is set to false
+            or not provided
+        firstName:
+          type: string
+          description: ⚠️ Need to be provided if field 'withoutLogin' is set to false
+            or not provided
+        lastName:
+          type: string
+          description: ⚠️ Need to be provided if field 'withoutLogin' is set to false
+            or not provided
+        legalName:
+          type: string
+          description: default to first_name + legal_name
+        jobTitle:
+          type: string
+        department:
+          type: string
+        manager:
+          type: string
+        password:
+          type: string
+          description: ⚠️ Need to be provided if field 'withoutLogin' is set to false
+            or not provided
+        language:
+          type: string
+          description: ISO 639-1 (two-letter code)
+        theme:
+          type: string
+        deviceId:
+          type: string
+        extUserId:
+          type: string
+          description: "External USER ID (i.e. Auth0:'sub', AzureAD B2C:'oid')"
+        identityProvider:
+          pattern: ^AZUREB2C$|^AUTH0$|^FDLT$
+          type: string
+          description: using the provided identity provider to validate JWT token
+        sendInvitationMessage:
+          type: boolean
+          description: Indicates whether an email should be sent to the user being
+            invited. The default is false
+          default: false
+        isGuest:
+          type: boolean
+          description: Indicates whether a user is guest or not. The default is false
+          default: false
+        azApplicationId:
+          type: string
+          description: Azure Application ID
+        type:
+          type: string
+          description: user CAN be Retail or Institutional
+          enum:
+          - R
+          - I
+        extUserRef:
+          type: string
+        investorId:
+          type: integer
+        withoutLogin:
+          type: boolean
+          description: "If set to false or not provided, will generate azure b2c account,\
+            \ with false value, password and mobile phone are required."
+          default: false
+        kycStatus:
+          type: boolean
+          description: "If set to true, will setup the investor with a valid KYC status."
+          default: false
+    KafkaDeployContract_Data:
+      required:
+      - name
+      - private
+      - uid
+      - uuid
+      type: object
+      properties:
+        uid:
+          type: string
+          example: "100064"
+        name:
+          type: string
+          example: Core
+        private:
+          type: boolean
+        uuid:
+          type: string
+          example: aec4ca98-b0be-4e1c-901c-c89569eaa703
+        privateFor:
+          type: array
+          items:
+            type: string
+            example: ei47y/dVbTivYCmP1gIueUYMqjltfY92hBKsZmgOXig=
+    KafkaSendTx_Data:
+      required:
+      - FuncName
+      - FuncParam
+      - PrivateFor
+      - Uuid
+      type: object
+      properties:
+        FuncParam:
+          type: string
+          example: "100219, 0xe8a0Fa1CC717daf69a90d655F9aD5d8557B8166D, 0xe7321b5b2fe2ea82ac7f1016d1ef28b582ebe6b1,\
+            \ CPFOA, 100072"
+        FuncName:
+          type: string
+          example: Core.__Core_Init
+        Uuid:
+          type: string
+          example: aec4ca98-b0be-4e1c-901c-c89569eaa703
+        PrivateFor:
+          type: array
+          items:
+            type: string
+            example: ei47y/dVbTivYCmP1gIueUYMqjltfY92hBKsZmgOXig=
+    PaginatedStatus_pagination:
+      required:
+      - next
+      - page
+      - perPage
+      - prev
+      - total
+      - totalPage
+      type: object
+      properties:
+        total:
+          type: integer
+          format: int64
+        page:
+          type: integer
+          format: int64
+        perPage:
+          type: integer
+          format: int64
+        prev:
+          type: integer
+          format: int64
+        next:
+          type: integer
+          format: int64
+        totalPage:
+          type: integer
+          format: int64
+    PaginatedStatus_data:
+      required:
+      - batchNumber
+      - correlationId
+      - distributorReferenceId
+      - fnReferenceId
+      - orderRef
+      - sendDate
+      - senderCode
+      - status
+      - transactiontype
+      type: object
+      properties:
+        status:
+          type: string
+          description: "State of the order  <br /> PREP : Proccess ongoing <br />\
+            \  CREA : Order created <br /> INI : Order initiated <br /> HELD : Order\
+            \ held (optional) <br /> BULKED : Order bulked (optional) <br /> ACK :\
+            \ Order sent <br /> RECE : Order received (optional) <br /> PACK : Order\
+            \ accepted <br /> CONF : Order confirmed <br /> PLEDGED : Order pledged\
+            \ (settlement cycle conditional) <br /> RJCTD : Order rejected (conditional)\
+            \ <br /> CANC : Order canceled (conditional) <br /> CLOSED : Order closed\
+            \ <br /> ERROR : Order in error <br />"
+        orderRef:
+          type: string
+          description: The unique reference of your Order in FundsDLT
+          nullable: false
+          example: FDLT0lcyv20loezb
+        batchNumber:
+          type: string
+          example: 9FUND0014
+        senderCode:
+          type: string
+          example: F50014
+        sendDate:
+          type: string
+          example: "20230106"
+        distributorReferenceId:
+          type: string
+          example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb-0026
+        transactionType:
+          type: string
+          example: P
+        correlationId:
+          type: string
+          description: ID of the call
+          example: 1e6860c5-395f-4941-851e-6efa29fa3308
+        errorStatus:
+          type: string
+          description: Code of the error
+          nullable: true
+          enum:
+          - MKNB-XXXXX-0000
+          - MKNB-XX-SWITCH-0001
+          - MKNB-XX-STXXX-0000
+          - MKNB-XX-STXXX-0001
+          - MKNB-XX-STXXX-0002
+          - MKNB-XX-STXXX-0003
+          - MKNB-XX-STXXX-0004
+          - MKNB-XX-STXXX-0005
+          - MKNB-XX-STXXX-0006
+          - MKNB-XX-STXXX-0007
+          - MKNB-XX-STXXX-0008
+          - MKNB-XX-STXXX-0009
+          - MKNB-XX-STXXX-0010
+          - MKNB-FM-ST000-0001
+          - MKNB-FM-ST000-0002
+          - MKNB-FM-ST000-0004
+          - MKNB-FM-ST000-0005
+          - MKNB-UT-ST000-0001
+          - MKNB-UT-ST000-0002
+          - MKNB-UT-ST000-0004
+          - MKNB-UT-ST000-0005
+          - MKNB-FM-ST001-0001
+          - MKNB-UT-ST001-0001
+          - MKNB-FM-ST002-0003
+          - MKNB-UT-ST002-0003
+          - MKNB-FM-ST003-0001
+          - MKNB-FM-ST003-0002
+          - MKNB-UT-ST003-0001
+          - MKNB-UT-ST003-0002
+          - MKNB-FM-ST004-0001
+          - MKNB-UT-ST004-0001
+          - MKNB-CMN-ST000-0001
+          - MKNB-CMN-ST000-0002
+          - MKNB-CMN-ST000-0003
+          - MKNB-CMN-ST000-0004
+          - MKNB-CMN-ST000-0005
+          - MKNB-CMN-ST000-0006
+          - MKNB-CMN-ST000-0009
+          - MKNB-CMN-ST000-0010
+          - MKNB-CMN-ST000-0011
+          - MKNB-CANC-0000
+          - MKNB-CANC-0001
+          - MKNB-CANC-0002
+        errorMessage:
+          type: string
+          description: Message of the error
+          example: WORKFLOW UT NOT MANAGE
+        traceId:
+          type: string
+          description: Trace in FDLT platform
+          example: 5ddfc90a7512e9f5
+        identificationNumber:
+          type: string
+          example: 1e6860c5-395f-4941-851e-6efa29fa3308
+        fnReferenceId:
+          type: string
+          example: 85fd7ba6-e588-4e7f-8690-a936365dfdbb
+        whitelistedTransaction:
+          type: string
+          description: if whitelisted or not (available since CONF)
+          nullable: true
+          enum:
+          - "Y"
+          - "N"
+        blacklistedTransaction:
+          type: string
+          description: if blacklisted or not (available since CONF)
+          nullable: true
+          enum:
+          - "Y"
+          - "N"
+        navDate:
+          pattern: "^\\d{4}\\d{2}\\d{2}$"
+          type: string
+          description: NAV date (available since CONF)
+          example: "20230106"
+        price:
+          type: string
+          description: NAV pricing used for unit allotment. Last 6 digits to be decimals
+            (available since CONF)
+          example: "123456"
+        taReferenceId:
+          type: string
+          description: TA's transaction reference ID (available since CONF)
+        unitsNb:
+          type: string
+          description: Number of shares (available since CONF)
+          example: "10"
+        netAmt:
+          type: string
+          description: Net amount (available since CONF)
+          example: "990.63"
+        amt:
+          type: string
+          description: Gross amount
+          example: "1000"
+        detailedMessage:
+          type: string
+          description: Detailed free text message on reasons for rejection
+          example: reason of the rejection
+        masterRef:
+          type: string
+          description: Bulk OrderRef
+          example: FDLT0lh7rn3861gd
+        cancellation:
+          $ref: '#/components/schemas/OrderCancellationResponse_cancellation'
+        cashSttlDt:
+          pattern: "^\\d{4}\\d{2}\\d{2}$"
+          type: string
+          description: Cash settlement date (available since CONF)
+          example: "20230106"
+    PaginatedBulkStatus_data:
+      required:
+      - cashSttlDt
+      - fees
+      - grossAmt
+      - masterRef
+      - nav
+      - netAmt
+      - unitsNb
+      type: object
+      properties:
+        masterRef:
+          type: string
+          description: The unique reference of your Bulked Order in FundsDLT
+          nullable: false
+          example: FDLT0lcyv20loezb
+        unitsNb:
+          type: string
+          description: Number of shares (available since CONF)
+          nullable: true
+        netAmt:
+          type: string
+          description: Net amount (available since CONF)
+          nullable: true
+        grossAmt:
+          type: string
+          description: Gross amount
+          nullable: true
+        nav:
+          type: string
+          description: Nav
+          nullable: true
+        cashSttlDt:
+          pattern: "^\\d{4}\\d{2}\\d{2}$"
+          type: string
+          description: Cash settlement date (available since CONF)
+          nullable: true
+          example: "20230106"
+        fees:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/submitOrderConfirmation_fees'
+    Step_type:
+      required:
+      - type
+      - workflowType
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Id
+          format: int32
+        workflowType:
+          type: string
+          example: investor
+          enum:
+          - investor
+          - order
+        type:
+          type: string
+          example: CreateInvestor
+          enum:
+          - CreateInvestor
+          - CreateEthAccount
+          - DeployContract
+          - CreatePortfolio
+          - OrderOnBehalf
+    Step_errors:
+      required:
+      - code
+      - msg
+      - type
+      type: object
+      properties:
+        code:
+          maxLength: 20
+          minLength: 1
+          type: string
+          description: Error code
+          example: '"AMLKYC01"'
+        type:
+          maxLength: 20
+          minLength: 1
+          pattern: ^Error$|^Warning$|^Message$
+          type: string
+          description: KYC Session pending for more then 30 minutes
+          example: Warning
+        msg:
+          maxLength: 255
+          minLength: 1
+          type: string
+          description: Error message
+          example: KYC Session pending for more then 30 minutes
+    StepperSteps_steps:
+      required:
+      - status
+      - type
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/Step_type'
+        status:
+          type: string
+          example: NotStarted
+          enum:
+          - NotStarted
+          - InProgress
+          - Closed
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Step_errors'
+        startDt:
+          type: string
+          format: date-time
+        endDt:
+          type: string
+          format: date-time
+    StepperSteps_stepsState:
+      required:
+      - index
+      - status
+      - steps
+      - subStatus
+      type: object
+      properties:
+        index:
+          type: integer
+          description: Index of the step
+        status:
+          type: string
+          example: NotStarted
+          enum:
+          - NotStarted
+          - InProgress
+          - Closed
+        subStatus:
+          type: string
+          enum:
+          - CREATE_INVESTOR
+          - CREATE_ETH_ACCOUNT
+          - DEPLOY_CONTRACT
+          - CREATE_PORTFOLIO
+          - ORDER_ONBEHALF
+        steps:
+          minItems: 1
+          type: array
+          items:
+            $ref: '#/components/schemas/StepperSteps_steps'
+    ValidationRule_ErrorMessages:
+      required:
+      - MessCode
+      - Message
+      type: object
+      properties:
+        MessCode:
+          type: string
+        Message:
+          type: string
+    ValidationRule_Errors:
+      required:
+      - ErrorCode
+      - ErrorMessage
+      type: object
+      properties:
+        ErrorCode:
+          type: string
+        ErrorMessage:
+          type: string
+        SolutionInfo1:
+          type: string
+        SolutionInfo2:
+          type: string
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            required:
+            - code
+            - message
+            type: object
+            properties:
+              code:
+                type: string
+              message:
+                type: string
+    UnexpectedError:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            required:
+            - code
+            - message
+            type: object
+            properties:
+              code:
+                type: string
+              message:
+                type: string
+    NotFound:
+      description: Not NotFound
+      content:
+        application/json:
+          schema:
+            required:
+            - code
+            - message
+            type: object
+            properties:
+              code:
+                type: string
+              message:
+                type: string
+          examples:
+            default:
+              value:
+                code: "404"
+                message: fnReferenceID does not exist
+    NotAcceptable:
+      description: Not Acceptable
+      content:
+        application/json:
+          schema:
+            required:
+            - code
+            - message
+            type: object
+            properties:
+              code:
+                type: string
+              message:
+                type: string
+          examples:
+            default:
+              value:
+                code: "406"
+                message: cancellation request already submitted
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,34 @@
+---
+id: submit-agent-bank-approval
+title: "Submitting Agent Bank Approval"
+description: "Submitting Agent Bank Approval"
+sidebar_label: "Submitting Agent Bank Approval"
+hide_title: true
+hide_table_of_contents: true
+api: {"tags":["Order","External"],"operationId":"submitAgentBankApproval","requestBody":{"content":{"application/json":{"schema":{"minItems":1,"type":"array","items":{"required":["agentBankProcessCode","distributorCode","distributorReferenceId","fnReferenceId","processingDate"],"type":"object","properties":{"distributorCode":{"type":"string","example":"F50006"},"distributorReferenceId":{"type":"string","example":"85fd7ba6-e588-4e7f-8690-a936365dfdbb-0026"},"fnReferenceId":{"type":"string","example":"85fd7ba6-e588-4e7f-8690-a936365dfdbb"},"processingDate":{"pattern":"^\\d{4}\\d{2}\\d{2}$","type":"string","example":"20230106"},"agentBankReferenceId":{"type":"string"},"agentBankProcessCode":{"type":"string","description":"0000 : Successful <br /> 0010 : External party code not found <br /> 0011 : Please refer to member (bankrupt, medical grounds, a/c frozen) <br /> 0012 : Mismatch account number against CPFOA or Other Info <br /> 0014 : Account closed <br /> 0015 : Insufficient funds for settlement <br /> 0016 : Mismatched identification number <br /> 9999 : Other reasons <br />","enum":["0000","0010","0011","0012","0014","0015","0016","9999"]}},"title":"submitAgentBankApproval_body"}}}},"required":true},"responses":{"501":{"description":"Not implemented"}},"security":[],"description":"Submitting Agent Bank Approval","method":"post","path":"/submitAgentBankApproval","servers":[{"url":"/"}],"securitySchemes":{"bearerAuth":{"type":"http","scheme":"bearer","bearerFormat":"JWT"}},"jsonRequestBodyExample":[{"distributorCode":"F50006","distributorReferenceId":"85fd7ba6-e588-4e7f-8690-a936365dfdbb-0026","fnReferenceId":"85fd7ba6-e588-4e7f-8690-a936365dfdbb","processingDate":"20230106","agentBankReferenceId":"string","agentBankProcessCode":"0000"}],"info":{"title":"Fundnode API","description":"Fundnode API Endpoint","termsOfService":"http://swagger.io/terms/","contact":{"name":"Fundnode Team","url":"https://www.marketnode.com","email":"fundops@marketnode.com"},"license":{"name":"Apache 2.0","url":"https://www.apache.org/licenses/LICENSE-2.0.html"},"version":"0.30.0"},"postman":{"name":"Submitting Agent Bank Approval","description":{"type":"text/plain"},"url":{"path":["submitAgentBankApproval"],"host":["{{baseUrl}}"],"query":[],"variable":[]},"header":[{"key":"Content-Type","value":"application/json"}],"method":"POST","body":{"mode":"raw","raw":"\"\"","options":{"raw":{"language":"json"}}}}}
+sidebar_class_name: "post api-method"
+info_path: docs/fundnode/fundnode-api
+custom_edit_url: null
+---
+
+import ApiTabs from "@theme/ApiTabs";
+import MimeTabs from "@theme/MimeTabs";
+import ParamsItem from "@theme/ParamsItem";
+import ResponseSamples from "@theme/ResponseSamples";
+import SchemaItem from "@theme/SchemaItem";
+import SchemaTabs from "@theme/SchemaTabs";
+import DiscriminatorTabs from "@theme/DiscriminatorTabs";
+import TabItem from "@theme/TabItem";
+
+## Submitting Agent Bank Approval
+
+
+
+Submitting Agent Bank Approval
+
+<MimeTabs><TabItem label={"application/json"} value={"application/json-schema"}><details style={{}} data-collapsed={false} open={true}><summary style={{"textAlign":"left"}}><strong>Request Body</strong><span style={{"opacity":"0.6"}}> array</span><strong style={{"fontSize":"var(--ifm-code-font-size)","color":"var(--openapi-required)"}}> required</strong></summary><div style={{"textAlign":"left","marginLeft":"1rem"}}></div><ul style={{"marginLeft":"1rem"}}><li><div style={{"fontSize":"var(--ifm-code-font-size)","opacity":"0.6","marginLeft":"-.5rem","paddingBottom":".5rem"}}>Array [</div></li><SchemaItem collapsible={false} name={"distributorCode"} required={true} schemaName={"string"} qualifierMessage={undefined} schema={{"type":"string","example":"F50006"}}></SchemaItem><SchemaItem collapsible={false} name={"distributorReferenceId"} required={true} schemaName={"string"} qualifierMessage={undefined} schema={{"type":"string","example":"85fd7ba6-e588-4e7f-8690-a936365dfdbb-0026"}}></SchemaItem><SchemaItem collapsible={false} name={"fnReferenceId"} required={true} schemaName={"string"} qualifierMessage={undefined} schema={{"type":"string","example":"85fd7ba6-e588-4e7f-8690-a936365dfdbb"}}></SchemaItem><SchemaItem collapsible={false} name={"processingDate"} required={true} schemaName={"string"} qualifierMessage={"**Possible values:** Value must match regular expression `^\\d{4}\\d{2}\\d{2}$`"} schema={{"pattern":"^\\d{4}\\d{2}\\d{2}$","type":"string","example":"20230106"}}></SchemaItem><SchemaItem collapsible={false} name={"agentBankReferenceId"} required={false} schemaName={"string"} qualifierMessage={undefined} schema={{"type":"string"}}></SchemaItem><SchemaItem collapsible={false} name={"agentBankProcessCode"} required={true} schemaName={"string"} qualifierMessage={"**Possible values:** [`0000`, `0010`, `0011`, `0012`, `0014`, `0015`, `0016`, `9999`]"} schema={{"type":"string","description":"0000 : Successful <br /> 0010 : External party code not found <br /> 0011 : Please refer to member (bankrupt, medical grounds, a/c frozen) <br /> 0012 : Mismatch account number against CPFOA or Other Info <br /> 0014 : Account closed <br /> 0015 : Insufficient funds for settlement <br /> 0016 : Mismatched identification number <br /> 9999 : Other reasons <br />","enum":["0000","0010","0011","0012","0014","0015","0016","9999"]}}></SchemaItem><li><div style={{"fontSize":"var(--ifm-code-font-size)","opacity":"0.6","marginLeft":"-.5rem"}}>]</div></li></ul></details></TabItem></MimeTabs><div><ApiTabs><TabItem label={"501"} value={"501"}><div>
+
+Not implemented
+
+</div><div></div></TabItem></ApiTabs></div>
+      
